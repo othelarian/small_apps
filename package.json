@@ -1,0 +1,37 @@
+{
+  "name": "small_apps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "cake": "cake",
+    "build": "cake build",
+    "release": "cake -r build",
+    "github": "cake -g build",
+    "serve": "cake serve",
+    "clean": "cake clean",
+    "test": "cake test_cake"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/othelarian/small_apps.git"
+  },
+  "author": "othelarian",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/othelarian/small_apps/issues"
+  },
+  "homepage": "https://github.com/othelarian/small_apps#readme",
+  "devDependencies": {
+    "bach": "^2.0.1",
+    "chokidar": "^3.5.3",
+    "coffeescript": "^2.7.0",
+    "connect": "^3.7.0",
+    "fs-extra": "^11.1.1",
+    "livescript": "^1.6.0",
+    "pug": "^3.0.2",
+    "sass": "^1.62.1",
+    "serve-static": "^1.15.0",
+    "terser": "^5.17.5"
+  }
+}
