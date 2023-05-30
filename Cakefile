@@ -117,6 +117,13 @@ createDir = (cb) ->
     if e.code = 'EEXIST' then cb null, 1
     else cb e, null
 
+launchServer = (cb) ->
+  console.log 'launching dev server...'
+  app = (require 'connect')()
+  app.use((require 'serve-static') './dist')
+  (require 'http').createServer(app).listen 5000
+  console.log 'dev server running on port 5000'
+
 # SUB TASKS ###########################
 
 building = bach.series(
@@ -181,7 +188,10 @@ task 'compile', 'compile one project, and watch it (USE PROJECT ID!)', (opts) ->
       console.log 'please select a project IN THE LIST'
     else
       cfg.id = nid
-      building (e, _) -> if e? then console.log e
+      if cfg.watching
+        (bach.series building, launchServer) (e, _) -> if e? then console.log e
+      else
+        building (e, _) -> if e? then console.log e
   else console.log 'please set the id of the project you want to compile'
 
 task 'list', 'list all projects actually available', (_) ->
@@ -196,11 +206,4 @@ task 'serve', 'launch the server to get access to the projects', (opts) ->
   opts.release = false
   checkEnv opts
   if not await fse.pathExists './dist' then buildAll()
-  console.log 'launching server...'
-  connect = require 'connect'
-  http = require 'http'
-  serveStatic = require 'serve-static'
-  app = connect()
-  app.use(serveStatic "./dist")
-  http.createServer(app).listen 5000
-  console.log 'dev server launched'
+  launchServer()
