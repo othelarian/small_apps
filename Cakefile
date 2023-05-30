@@ -32,7 +32,18 @@ doExec = (in_file, out_file, selected) ->
       when 'ls'
         code = await fse.readFile in_file, { encoding: 'utf-8' }
         livescript.compile code, {}
-      when 'pug' then pug.renderFile in_file, cfg
+      #when 'pug' then pug.renderFile in_file, cfg
+      #
+      # TODO
+      #
+      when 'pug'
+        a = pug.renderFile in_file, cfg
+        if a.length < 15
+          console.log 'issue with the length'
+          console.log in_file
+          console.log a
+        a
+      #
       when 'sass' then (sass.compile in_file, { style: 'compressed' }).css
     fse.writeFileSync out_file, rendered
     traceExec selected
@@ -121,8 +132,8 @@ launchServer = (cb) ->
   console.log 'launching dev server...'
   app = (require 'connect')()
   app.use((require 'serve-static') './dist')
-  (require 'http').createServer(app).listen 5000
-  console.log 'dev server running on port 5000'
+  (require 'http').createServer(app).listen 5001
+  console.log 'dev server running on port 5001'
 
 # SUB TASKS ###########################
 
