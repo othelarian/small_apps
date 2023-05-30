@@ -14,6 +14,7 @@ option '-f', '--force', 'override time test'
 option '-g', '--github', ''
 option '-p', '--id [ID]', 'project id'
 option '-r', '--release', ''
+option '-w', '--watch', '(only for compile)'
 
 # COMMON FUNS #########################
 
@@ -23,14 +24,14 @@ checkEnv = (opts) ->
     else if opts.release then [cfg.dest_path.release, true, false]
     else [cfg.dest_path.debug, false, false]
   cfg.force = opts.force?
-  cfg.watching = false
+  #cfg.watching = false
 
 doExec = (in_file, out_file, selected) ->
   try
     rendered = switch selected
       when 'ls'
         code = await fse.readFile in_file, { encoding: 'utf-8' }
-        ls.compile code, {}
+        livescript.compile code, {}
       when 'pug' then pug.renderFile in_file, cfg
       when 'sass' then (sass.compile in_file, { style: 'compressed' }).css
     fse.writeFileSync out_file, rendered
@@ -121,11 +122,7 @@ createDir = (cb) ->
 building = bach.series(
   buildStart,
   createDir, copyStatic,
-  compilePug,
-  #
-  # TODO: activate the other element
-  #
-  # compileSass, compileLS
+  compilePug, compileSass, compileLS,
   buildEnd
 )
 
@@ -142,20 +139,47 @@ task 'clean', 'remove `dist`', (opts) ->
     if e? then console.log e
     else console.log "`#{cfg.dest}` removed successfully"
 
+task 'create', 'create a new project', (opts) ->
+  console.log 'creating a new project...'
+  readline = require 'readline-sync'
+  { names, printout, srcs } = require './project-src'
+  name = readline.question '# What is the name of the new project?'
+  path = readline.question '# What is the path of the new project?'
+  console.log "name: #{name}, path: #{path}"
+  if readline.keyInYN '# Is it what you want?'
+    console.log 'building the source...'
+    gen = (selected, cb) ->
+      try
+        out = srcs selected, name
+        fse.writeFile "./#{path}/#{names[selected]}", out #srcs(selected, name)
+        cb null, 32
+      catch e
+        console.log "====> Something went wrong <===="
+        cb e, null
+    cfg.out = path
+    genLS = (cb) -> gen 'ls', cb
+    genPug = (cb) -> gen 'pug', cb
+    genSass = (cb) -> gen 'sass', cb
+    creating = bach.series createDir, genLS, genPug, genSass
+    creating (e, _) ->
+      if e? then console.log e
+      else
+        console.log 'creation DONE'
+        console.log 'copy this in the config.coffee to enable your project:'
+        console.log printout name, path
+  else
+    console.log 'canceling creation...'
+
 task 'compile', 'compile one project, and watch it (USE PROJECT ID!)', (opts) ->
-  #
-  # TODO: call checkEnv
-  #
-  # TODO: force the debug mode
-  #
-  # TODO: set the watch mode optional
-  #
+  opts.github = false
+  opts.release = false
+  checkEnv opts
+  cfg.watching = opts.watch
   if opts.id?
     nid = parseInt opts.id
     if isNaN(nid) or nid > cfg.list.length
       console.log 'please select a project IN THE LIST'
     else
-      cfg.watching = yes
       cfg.id = nid
       building (e, _) -> if e? then console.log e
   else console.log 'please set the id of the project you want to compile'
@@ -168,12 +192,14 @@ task 'list', 'list all projects actually available', (_) ->
   console.log prj for prj in cfg.list.reduce t, []
 
 task 'serve', 'launch the server to get access to the projects', (opts) ->
-  #
-  #
-  # TODO: configure checkEnv with forced debug
-  #
+  opts.github = false
+  opts.release = false
+  checkEnv opts
   if not await fse.pathExists './dist' then buildAll()
   console.log 'launching server...'
+  connect = require 'connect'
+  http = require 'http'
+  serveStatic = require 'serve-static'
   app = connect()
   app.use(serveStatic "./dist")
   http.createServer(app).listen 5000

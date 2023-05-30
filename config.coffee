@@ -17,9 +17,15 @@ exports.cfg = {
   id: 0         # current compiling project id
   list: [
     {
-      active: yes
+      active: no
       name: 'Zombicide Decks Handler'
       path: 'zombicide_decks'
+      src: code.default
+    }
+    {
+      active: yes
+      name: '54 cards deck'
+      path: '54_deck'
       src: code.default
     }
   ]
