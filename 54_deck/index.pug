@@ -1,0 +1,61 @@
+doctype html
+html
+  head(lang='en')
+    title 54 cards deck
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width,initial-scale=1')
+    link(rel='stylesheet', href='style.css')
+    script(type='text/javascript', src='app.js')
+  body(onload='init()')
+    h1 54 cards deck
+    .link
+      a(href='..') back to the lib
+    .menu
+      button#menu-btn-play.selected(onclick="App.menu.action('play')") Play
+      button#menu-btn-deck(onclick="App.menu.action('deck')") Deck
+    #screen-play.screen
+      h2 Play
+      //
+      // TODO: build the 'play' screen interface
+      //
+      //
+      //
+      //
+    #screen-deck.screen
+      h2 Deck
+      label Cards in the deck:
+      br
+      textarea#deck-cards(style='height:100px')
+      hr
+      label Current deck:
+      br
+      textarea#deck-curr(style='height:180px')
+      .menu
+        button(onclick='App.deck.load()') Load
+        button(onclick='App.deck.generate()') Generate
+      hr
+      h3 Deck samples
+      div Classic 54:
+      - var a = []
+      for s in ['♥', '♦', '♠', '♣']
+        for v in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King']
+          - a.push(s + '-' + v)
+      - a.push('Red Joker')
+      - a.push('Black Joker')
+      - a = '["' + a.join('", "') + '"]'
+      #sample-classic.sample(onclick="App.sample.copy('classic')")= a
+      div 22 Triumphs:
+      - a = []
+      for v in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+        - a.push(v)
+      - a = '["' + a.join('", "') + '"]'
+      #sample-triumph.sample(onclick="App.sample.copy('triumph')")= a
+      div Tarot:
+      - var a = []
+      for s in ['♥', '♦', '♠', '♣']
+        for v in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Knight', 'Queen', 'King']
+          - a.push(s + '-' + v)
+      for v in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 'Excuse']
+        - a.push(v)
+      - a = '["' + a.join('", "') + '"]'
+      #sample-tarot.sample(onclick="App.sample.copy('tarot')")= a
