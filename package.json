@@ -7,7 +7,7 @@
     "cake": "cake",
     "build": "cake build",
     "release": "cake -r build",
-    "github": "cake -g build",
+    "github": "cake -g all",
     "serve": "cake serve",
     "clean": "cake clean",
     "test": "cake test_cake"
