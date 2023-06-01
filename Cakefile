@@ -82,15 +82,17 @@ buildAll = ->
     cb null, 4
   endIdx = (cb) ->
     console.log 'index done'
+    while not cfg.list[cfg.id].active then cfg.id += 1
     cb null, 5
   starter = bach.series startIdx, createDir, compilePug, endIdx
   args = [starter]
-  args.push building for _ in cfg.list
+  args.push building for p in cfg.list when p.active
   (bach.series.apply null, args) (e, _) -> if e? then console.log e
 
 buildEnd = (cb) ->
   console.log "building [ #{cfg.list[cfg.id].name} ] DONE"
   cfg.id += 1
+  while cfg.id < cfg.list.length and not cfg.list[cfg.id].active then cfg.id += 1
   cb null, 22
 
 buildStart = (cb) ->

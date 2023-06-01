@@ -8,5 +8,6 @@ html
     div Apps list:
     ul(style='width:fit-content;text-align:left;margin: 10px auto;')
       each p in list
-        li
-          a(href=p.path)=p.name
+        if p.active
+          li
+            a(href=p.path)=p.name
