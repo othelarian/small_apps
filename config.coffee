@@ -1,8 +1,8 @@
 code = {
   default: {
-    ls: ['app.ls', 'app.js']
-    pug: ['index.pug', 'index.html']
-    sass: ['style.sass', 'style.css']
+    ls: [['app.ls', 'app.js']]
+    pug: [['index.pug', 'index.html']]
+    sass: [['style.sass', 'style.css']]
   }
 }
 
@@ -28,8 +28,23 @@ exports.cfg = {
       path: '54_deck'
       src: code.default
     }
+    {
+      active: yes
+      name: 'final-diceroller'
+      path: 'final-dr'
+      src: code.default
+    }
+    {
+      active: no
+      name: 'bookmarks'
+      path: 'bookmarks'
+      src: {
+        ls: ['']
+      }
+    }
   ]
   out: ''       # code output dir
   src: null     # how is handle the sources
-  watching: no
+  watching: no  # to activate chokidar/server
+  chok: {}
 }

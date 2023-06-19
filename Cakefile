@@ -32,18 +32,10 @@ doExec = (in_file, out_file, selected) ->
       when 'ls'
         code = await fse.readFile in_file, { encoding: 'utf-8' }
         livescript.compile code, {}
-      #when 'pug' then pug.renderFile in_file, cfg
-      #
-      # TODO
-      #
-      when 'pug'
-        a = pug.renderFile in_file, cfg
-        if a.length < 15
-          console.log 'issue with the length'
-          console.log in_file
-          console.log a
-        a
-      #
+        #
+        # TODO: add terser here in case of release/github mode
+        #
+      when 'pug' then pug.renderFile in_file, cfg
       when 'sass' then (sass.compile in_file, { style: 'compressed' }).css
     fse.writeFileSync out_file, rendered
     traceExec selected
@@ -54,21 +46,23 @@ traceExec = (name) ->
   stmp = new Date().toLocaleString()
   console.log "#{stmp} => #{name} compilation done"
 
-runExec = (selected, cb) ->
-  [in_file, out_file] = switch selected
-    when 'ls' then cfg.src.ls
-    when 'pug' then cfg.src.pug
-    when 'sass' then cfg.src.sass
-  in_file = "#{cfg.dir}/#{in_file}"
-  out_file = "#{cfg.out}/#{out_file}"
-  doExec in_file, out_file, selected
+runExec = (selected, in_file, out_file, cb) ->
+  #
+  # TODO: remove the direct call to chokidar here
+  #
   if cfg.watching then watchExec in_file, out_file, selected
   cb null, 11
 
 watchExec = (to_watch, out_file, selected) ->
-  watcher = chokidar.watch to_watch
-  watcher.on 'change', -> doExec(to_watch, out_file, selected)
-  watcher.on 'error', (err) -> console.log "CHOKIDAR ERROR:\n#{err}"
+  #
+  # TODO: adding files
+  #
+  #cfg.chok = []
+  console.log 'chokidar new version not ready'
+  #
+  #watcher = chokidar.watch to_watch, { awaitWriteFinish: true }
+  #watcher.on 'change', -> doExec(to_watch, out_file, selected)
+  #watcher.on 'error', (err) -> console.log "CHOKIDAR ERROR:\n#{err}"
 
 # ACTION FUNS #########################
 
@@ -103,11 +97,23 @@ buildStart = (cb) ->
   cfg.src = prj.src
   cb null, 21
 
-compileLS = (cb) -> runExec 'ls', cb
-
-compilePug = (cb) -> runExec 'pug', cb
-
-compileSass = (cb) -> runExec 'sass', cb
+compileSrc = (cb) ->
+  inLst = (lg, fc) ->
+    #
+    in_f = "#{cfg.dir}/#{fc[0]}"
+    out_f = "#{cfg.dir}/#{fc[1]}"
+    #
+    doExec in_f, out_f, lg
+    #
+    if cfg.watching
+      #
+      # TODO: activate chokidar here
+      #
+      console.log 'activate chokidar here'
+      #
+    #
+  inLg = (lg, lst) -> doExec fc[0], fc[1], lg for fc in lst
+  inLg lg, lst for lg, lst of cfg.src
 
 copyStatic = (cb) ->
   if await fse.pathExists "#{cfg.dir}/static"
@@ -131,6 +137,14 @@ createDir = (cb) ->
     else cb e, null
 
 launchServer = (cb) ->
+  # checking if chokidar has to be activated
+  #
+  # TODO: call chokidar here
+  #
+  #
+  #
+  #
+  # launching the server
   console.log 'launching dev server...'
   app = (require 'connect')()
   app.use((require 'serve-static') './dist')
@@ -142,7 +156,12 @@ launchServer = (cb) ->
 building = bach.series(
   buildStart,
   createDir, copyStatic,
-  compilePug, compileSass, compileLS,
+  #compilePug, compileSass, compileLS,
+  #
+  # TODO
+  #
+  compileSrc,
+  #
   buildEnd
 )
 
