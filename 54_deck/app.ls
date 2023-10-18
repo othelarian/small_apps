@@ -20,7 +20,8 @@ State =
   # attributes
   s: [] # the deck
   f: [] # the shuffle
-  h: [] # the hand
+  #h: [] # the hand # TODO
+  hs: [[]] # multiple hands
   d: [] # the discard
   p: 0  # the next position to read
   # methods
@@ -79,7 +80,13 @@ Deck =
     App.deck.dump!
   load: !->
     ld = JSON.parse(q-sel '#deck-curr' .value)
+    du = no
+    if ld.h?
+      ld.hs = [ld.h]
+      delete ld.h
+      du = yes
     State <<< ld
+    if du then App.dump!
     App.deck.clean yes
     for id in (ld.h.concat ld.d) then App.deck.card id
     for id in ld.d then App.deck.discard id, yes

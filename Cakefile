@@ -1,10 +1,8 @@
 bach = require 'bach'
-chokidar = require 'chokidar'
 fse = require 'fs-extra'
 livescript = require 'livescript'
 pug = require 'pug'
 sass = require 'sass'
-{ minify } = require 'terser'
 
 cfg = require('./config').cfg
 
@@ -31,10 +29,8 @@ doExec = (in_file, out_file, selected) ->
     rendered = switch selected
       when 'ls'
         code = await fse.readFile in_file, { encoding: 'utf-8' }
-        livescript.compile code, {}
-        #
-        # TODO: add terser here in case of release/github mode
-        #
+        out = livescript.compile code, {}
+        if cfg.release then (await (require 'terser').minify code).code else out
       when 'pug' then pug.renderFile in_file, cfg
       when 'sass' then (sass.compile in_file, { style: 'compressed' }).css
     fse.writeFileSync out_file, rendered
@@ -42,27 +38,14 @@ doExec = (in_file, out_file, selected) ->
   catch e
     console.error "doExec '#{selected}' => Something went wrong!!!!\n\n\n#{e}"
 
+finalCb = (e, r) ->
+  if e?
+    console.log "ERROR:\nResults: #{r}\n\n"
+    console.log e
+
 traceExec = (name) ->
   stmp = new Date().toLocaleString()
   console.log "#{stmp} => #{name} compilation done"
-
-runExec = (selected, in_file, out_file, cb) ->
-  #
-  # TODO: remove the direct call to chokidar here
-  #
-  if cfg.watching then watchExec in_file, out_file, selected
-  cb null, 11
-
-watchExec = (to_watch, out_file, selected) ->
-  #
-  # TODO: adding files
-  #
-  #cfg.chok = []
-  console.log 'chokidar new version not ready'
-  #
-  #watcher = chokidar.watch to_watch, { awaitWriteFinish: true }
-  #watcher.on 'change', -> doExec(to_watch, out_file, selected)
-  #watcher.on 'error', (err) -> console.log "CHOKIDAR ERROR:\n#{err}"
 
 # ACTION FUNS #########################
 
@@ -81,7 +64,7 @@ buildAll = ->
   starter = bach.series startIdx, createDir, compilePug, endIdx
   args = [starter]
   args.push building for p in cfg.list when p.active
-  (bach.series.apply null, args) (e, _) -> if e? then console.log e
+  (bach.series args) (e, _) -> if e? then console.log e
 
 buildEnd = (cb) ->
   console.log "building [ #{cfg.list[cfg.id].name} ] DONE"
@@ -99,20 +82,11 @@ buildStart = (cb) ->
 
 compileSrc = (cb) ->
   inLst = (lg, fc) ->
-    #
     in_f = "#{cfg.dir}/#{fc[0]}"
-    out_f = "#{cfg.dir}/#{fc[1]}"
-    #
+    out_f = "#{cfg.out}/#{fc[1]}"
     doExec in_f, out_f, lg
-    #
-    if cfg.watching
-      #
-      # TODO: activate chokidar here
-      #
-      console.log 'activate chokidar here'
-      #
-    #
-  inLg = (lg, lst) -> doExec fc[0], fc[1], lg for fc in lst
+    if cfg.watching then cfg.chok[in_f] = { lg, out: out_f }
+  inLg = (lg, lst) -> inLst lg, fc for fc in lst
   inLg lg, lst for lg, lst of cfg.src
 
 copyStatic = (cb) ->
@@ -137,13 +111,6 @@ createDir = (cb) ->
     else cb e, null
 
 launchServer = (cb) ->
-  # checking if chokidar has to be activated
-  #
-  # TODO: call chokidar here
-  #
-  #
-  #
-  #
   # launching the server
   console.log 'launching dev server...'
   app = (require 'connect')()
@@ -154,16 +121,28 @@ launchServer = (cb) ->
 # SUB TASKS ###########################
 
 building = bach.series(
-  buildStart,
-  createDir, copyStatic,
-  #compilePug, compileSass, compileLS,
-  #
-  # TODO
-  #
-  compileSrc,
-  #
-  buildEnd
+  buildStart, createDir, copyStatic, compileSrc, buildEnd
 )
+
+watching = (cb) ->
+  #
+  console.log cfg
+  #
+  #
+  chokidar = require 'chokidar'
+  watcher = chokidar.watch Object.keys(cfg.chok), { awaitWriteFinish: yes }
+  watcher.on 'change', (path) ->
+    #
+    # TODO
+    #
+    #watcher.on 'change', -> doExec(to_watch, out_file, selected)
+    #
+    console.log 'chokidar not working yet'
+    #
+  watcher.on 'error', (e) ->
+    console.log 'CHOKIDAR ERROR:\n'
+    console.log e
+  cb null, 31
 
 # TASKS ###############################
 
@@ -209,7 +188,7 @@ task 'create', 'create a new project', (opts) ->
   else
     console.log 'canceling creation...'
 
-task 'compile', 'compile one project, and watch it (USE PROJECT ID!)', (opts) ->
+task 'compile', 'compile one project (USE PROJECT ID!)', (opts) ->
   opts.github = false
   opts.release = false
   checkEnv opts
@@ -221,9 +200,19 @@ task 'compile', 'compile one project, and watch it (USE PROJECT ID!)', (opts) ->
     else
       cfg.id = nid
       if cfg.watching
-        (bach.series building, launchServer) (e, _) -> if e? then console.log e
+        #
+        console.log 'watching'
+        #
+        tt1 = (cb) ->
+          console.log 'tt'
+          cb null, 4
+        #
+        bb = bach.series(tt1, tt1)
+        #
+        (bach.series bb, tt1) finalCb
+        #(bach.series building, watching, launchServer) finalCb
       else
-        building (e, _) -> if e? then console.log e
+        building finalCb
   else console.log 'please set the id of the project you want to compile'
 
 task 'list', 'list all projects actually available', (_) ->
