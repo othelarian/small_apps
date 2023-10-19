@@ -22,6 +22,7 @@ State =
   f: [] # the shuffle
   #h: [] # the hand # TODO
   hs: [[]] # multiple hands
+  nh: 1 # number of hand (min: 1)
   d: [] # the discard
   p: 0  # the next position to read
   # methods
@@ -33,12 +34,15 @@ State =
       a[p] = v
     a
   reset: (d) !->
-    State <<<< {s: d, f: State.gendeck(d.length), h: [], d: [], p: 0}
+    State <<<< {s: d, f: State.gendeck(d.length), hs: [[]], nh: 1, d: [], p: 0}
 
 Deck =
   back: !->
-    q-sel '#deck-cards' .value = JSON.parse(q-sel '#deck-curr' .value) .s
-      |> JSON.stringify
+    try
+      q-sel '#deck-cards' .value = JSON.parse(q-sel '#deck-curr' .value) .s
+        |> JSON.stringify
+    catch e
+      App.veil.open 'no-deck-err'
   card: (id) !->
     e = c-elt \div {class: 'card', id: "c#{id}"}
     e.append c-elt \span {class: \text} State.s[id]
@@ -47,6 +51,9 @@ Deck =
     e.append s
     q-sel '#play-hand' .append e
   clean: (hand = no) !->
+    #
+    # TODO: how to clean the hand number too?
+    #
     if hand
       q-sel '#play-hand' .innerHTML = ''
       State.h = []
@@ -55,6 +62,9 @@ Deck =
   copy: !->
     navigator.clipboard.writeText q-sel('#deck-curr').value
   discard: (id, load = no) !->
+    #
+    # TODO: add a button to get the card back in hand
+    #
     State.h = State.h.filter (isnt id)
     State.d.push id
     q-sel "\#c#id button" .remove!
@@ -83,11 +93,15 @@ Deck =
     du = no
     if ld.h?
       ld.hs = [ld.h]
+      ld.nh = 1
       delete ld.h
       du = yes
     State <<< ld
     if du then App.dump!
     App.deck.clean yes
+    #
+    # TODO: modify this to adapt to multi hand system
+    #
     for id in (ld.h.concat ld.d) then App.deck.card id
     for id in ld.d then App.deck.discard id, yes
     App.deck.stats!

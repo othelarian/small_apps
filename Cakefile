@@ -37,6 +37,7 @@ doExec = (in_file, out_file, selected) ->
     traceExec selected
   catch e
     console.error "doExec '#{selected}' => Something went wrong!!!!\n\n\n#{e}"
+    #throw e
 
 finalCb = (e, r) ->
   if e?
@@ -61,6 +62,9 @@ buildAll = ->
     console.log 'index done'
     while not cfg.list[cfg.id].active then cfg.id += 1
     cb null, 5
+  compilePug = (cb) ->
+    doExec "#{cfg.dir}/#{cfg.src.pug[0]}", "#{cfg.out}/#{cfg.src.pug[1]}", 'pug'
+    cb null, 45
   starter = bach.series startIdx, createDir, compilePug, endIdx
   args = [starter]
   args.push building for p in cfg.list when p.active
@@ -85,9 +89,10 @@ compileSrc = (cb) ->
     in_f = "#{cfg.dir}/#{fc[0]}"
     out_f = "#{cfg.out}/#{fc[1]}"
     doExec in_f, out_f, lg
-    if cfg.watching then cfg.chok[in_f] = { lg, out: out_f }
+    if cfg.watching then cfg.chok[in_f.substring 2] = { lg, out: out_f }
   inLg = (lg, lst) -> inLst lg, fc for fc in lst
   inLg lg, lst for lg, lst of cfg.src
+  cb null, 13
 
 copyStatic = (cb) ->
   if await fse.pathExists "#{cfg.dir}/static"
@@ -125,20 +130,11 @@ building = bach.series(
 )
 
 watching = (cb) ->
-  #
-  console.log cfg
-  #
-  #
   chokidar = require 'chokidar'
   watcher = chokidar.watch Object.keys(cfg.chok), { awaitWriteFinish: yes }
   watcher.on 'change', (path) ->
-    #
-    # TODO
-    #
-    #watcher.on 'change', -> doExec(to_watch, out_file, selected)
-    #
-    console.log 'chokidar not working yet'
-    #
+    path = path.replaceAll '\\', '/'
+    doExec path, cfg.chok[path].out, cfg.chok[path].lg
   watcher.on 'error', (e) ->
     console.log 'CHOKIDAR ERROR:\n'
     console.log e
@@ -200,17 +196,7 @@ task 'compile', 'compile one project (USE PROJECT ID!)', (opts) ->
     else
       cfg.id = nid
       if cfg.watching
-        #
-        console.log 'watching'
-        #
-        tt1 = (cb) ->
-          console.log 'tt'
-          cb null, 4
-        #
-        bb = bach.series(tt1, tt1)
-        #
-        (bach.series bb, tt1) finalCb
-        #(bach.series building, watching, launchServer) finalCb
+        (bach.series building, watching, launchServer) finalCb
       else
         building finalCb
   else console.log 'please set the id of the project you want to compile'

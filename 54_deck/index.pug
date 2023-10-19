@@ -32,6 +32,11 @@ html
             button(onclick='App.deck.shuffle()') Shuffle
             button(onclick="App.veil.open('deck')") Show deck
         div
+          //
+          // TODO
+          //
+          div (hand here)
+          //
           h4 Cards in hand:
           #play-hand.list
       .line
@@ -105,3 +110,10 @@ html
         #veil-deck-list
         .menu
           button(onclick='App.veil.close()') Close
+      #veil-get-deck-err.veil-screen
+        //
+        // TODO: when using "Get Deck" with no deck loaded
+        //
+        h2 No deck
+        //
+        //
