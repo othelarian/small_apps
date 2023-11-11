@@ -23,6 +23,9 @@ State =
   #h: [] # the hand # TODO
   hs: [[]] # multiple hands
   nh: 1 # number of hand (min: 1)
+  #
+  # TODO: n instead of h?
+  #
   d: [] # the discard
   p: 0  # the next position to read
   # methods
