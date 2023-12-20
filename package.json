@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "cake": "cake",
-    "build": "cake build",
-    "release": "cake -r build",
-    "github": "cake -g all",
-    "serve": "cake serve",
-    "clean": "cake clean",
-    "test": "cake test_cake"
+    "build": "live all",
+    "clean": "live clean",
+    "compile": "live compile",
+    "github": "live -g all",
+    "live": "live",
+    "list": "live list",
+    "release": "live -r all",
+    "serve": "live serve"
   },
   "repository": {
     "type": "git",
@@ -23,16 +24,16 @@
   },
   "homepage": "https://github.com/othelarian/small_apps#readme",
   "devDependencies": {
+    "@othelarian/livefile": "^1.0.0",
     "bach": "^2.0.1",
     "chokidar": "^3.5.3",
-    "coffeescript": "^2.7.0",
-    "connect": "^3.7.0",
+    "express": "^4.18.2",
     "fs-extra": "^11.1.1",
     "livescript": "^1.6.0",
+    "prelude-ls": "^1.2.1",
     "pug": "^3.0.2",
     "readline-sync": "^1.4.10",
     "sass": "^1.62.1",
-    "serve-static": "^1.15.0",
     "terser": "^5.17.5"
   }
 }

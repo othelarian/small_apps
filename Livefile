@@ -1,0 +1,192 @@
+# REQUIRES ############################
+
+require! {
+  bach, pug, sass
+  'fs-extra': fse
+  livescript: ls
+  './config': { cfg }
+}
+
+# OPTIONS #############################
+
+option \github,  \g, \Boolean, ''
+option \id,      \p, \Int,     'project id'
+option \release, \r, \Boolean, ''
+option \watch,   \w, \Boolean, '(only for dev mode)'
+
+# HELPERS #############################
+
+check-env = (opts) ->
+  [cfg.dest, cfg.release, cfg.github] = switch
+    | opts.github  => [cfg.dest_path.github,   yes, yes]
+    | opts.release => [cfg.dest_path.releaase, yes, no]
+    | _            => [cfg.dest_path.debug,    no,  no]
+
+do-exec = (inf, outf, sel) -->
+  try
+    r = switch sel
+      | \ls   => fse.readFileSync inf, \utf-8 |> ls.compile
+      | \pug  => pug.renderFile inf, cfg
+      | \sass => (sass.compile inf, { style: \compressed }).css
+    fse.writeFileSync outf, r
+    console.log "#{new Date!toLocaleString!} => '#{sel}' compilation done"
+  catch e
+    console.log 'ERROR(doExec): Something went wrong!!\n\n'
+    console.log e
+
+final-cb = (e, r) ->
+  if e?
+    console.log "ERROR:\n(Results: #r)\n\n"
+    console.log e
+
+# ACTIONS #############################
+
+build-all = ->
+  end-all = (cb) ->
+    cfg.id = 0
+    cb void 5
+  start-all = (cb) ->
+    cfg.dir = '.'
+    cfg.out = "./#{cfg.dest}"
+    cfg.src = cfg.root
+    cb void 4
+  cfg.list = cfg.list.filter (.active), cfg.list
+  args =
+    [building for _ til cfg.list.length].flat!
+    |> ([start-all, create-dir, compile-src, end-all] ++)
+  (bach.series args) final-cb
+
+
+build-end = (cb) ->
+  console.log "building [ #{cfg.list[cfg.id].name} ] DONE"
+  cfg.id += 1
+  cb void 22
+
+build-start = (cb) ->
+  prj = cfg.list[cfg.id]
+  console.log "starting building [ #{prj.name} ] ..."
+  cfg.dir = "./#{prj.path}"
+  cfg.out = "./#{cfg.dest}/#{prj.path}"
+  cfg.src = prj.src
+  cb void 21
+
+compile-src = (cb) ->
+  in-lst = (lg, fc) ->
+    inf = "#{cfg.dir}/#{fc[0]}"
+    outf = "#{cfg.out}/#{fc[1]}"
+    do-exec inf, outf, lg
+    if cfg.watching then cfg.chok[inf.substring 2] = { lg, outf }
+  in-lg = (lg, lst) -> for fc in lst then in-lst lg, fc
+  for lg, lst of cfg.src then in-lg lg, lst
+  cb void 13
+
+copy-static = (cb) ->>
+  if await fse.pathExists "#{cfg.dir}/static"
+    console.log 'copy static file'
+    try
+      await fse.mkdirs "#{cfg.out}/static"
+      await fse.copy "#{cfg.dir}/static", "#{cfg.out}/static"
+      cb void 7
+  else
+    console.log 'no static file to copy'
+    cb void 8
+
+create-dir = (cb) ->>
+  try
+    await fse.mkdirs "./#{cfg.out}"
+    cb void 0
+  catch e
+    if e.code is 'EEXIST' then cb void 1 else cb e void
+
+launch-server = (cb) ->
+  console.log 'launching dev server...'
+  require! express
+  app = express!
+  app.use express.static \./dist
+  app.listen 5001
+  console.log 'dev server running on port 5001'
+
+watching = (cb) ->
+  require! chokidar
+  watcher = chokidar.watch Object.keys cfg.chok, { awaitWriteFinish: yes }
+  watcher.on \change, (path) ->
+    path = path.replaceAll '\\', '/'
+    console.log "recompiling: '#path'"
+    do-exec path, cfg.chok[path].outf, cfg.chok[path].lg
+  watcher.on \error, (e) ->
+    console.log 'CHOKIDAR ERROR:\n'
+    console.log e
+  cb void 31
+
+# SHORTCUTS ###########################
+
+building = [build-start, create-dir, copy-static, compile-src, build-end]
+
+# TASKS ###############################
+
+task \all, 'compile all active projects', (opts) ->
+  check-env opts
+  build-all!
+
+task \clean, 'remove `dist`', (opts) ->
+  check-env opts
+  console.log "cleaning `#{cfg.dest}`..."
+  fse.remove "./#{cfg.dest}", (e) ->
+    if e? then console.log e
+    else console.log "`#{cfg.dest}` removed successfully"
+
+task \create, 'create a new project', (opts) ->
+  console.log 'creating a new project...'
+  require! {
+    'readline-sync': readline,
+    './project-src': { names, printout, srcs }
+  }
+  name = readline.question '# What is its name? > '
+  path = readline.question '# What is its path? > '
+  console.log "name: #name, path: #path"
+  if readline.keyInYN '# Is it what you want?'
+    console.log 'building the source...'
+    cfg.out = path
+    gen = (sel, cb) -->
+      try
+        out = srcs sel, name
+        fse.writeFile "./#path/#{names[sel]}", out
+        cb void 32
+      catch e
+        console.log '=======> SOMETHING WENT WRONG <======='
+        cb e, void
+    (bach.series create-dir, (gen 'ls'), (gen 'pug'), (gen 'sass')) (e, _) ->
+      if e? then console.log e
+      else
+        console.log 'creation DONE'
+        console.log 'copy this in the config.ls to enable your project:'
+        console.log printout name, path
+  else console.log 'canceling creation...'
+
+task \compile, 'compile one project (USE PROJECT ID!)', (opts) ->
+  opts.github = no
+  opts.release = no
+  check-env opts
+  if opts.watch? then cfg.watching = opts.watch
+  if opts.id?
+    if opts.id > cfg.list.length
+      console.log 'please select a project IN THE LIST!'
+    else
+      cfg.id = opts.id
+      bld =
+        if cfg.watching then [watching, launch-server] else []
+        |> (building ++)
+        |> bach.series
+      bld final-cb
+  else console.log 'please set the id of the project you want to compile'
+
+task \list, 'list all projects actually available', (_) ->
+  console.log 'Projects list:'
+  for prj, i in cfg.list then console.log "#i => #{prj.name}"
+
+task \serve, 'launch the server to get access to the projects', (opts) ->
+  opts.github = no
+  opts.release = no
+  check-env opts
+  build-all!
+  launch-server!

@@ -1,4 +1,4 @@
-lsSrc = """
+lsSrc = '''
 # UTILS ######################################
 
 function c-elt tag, attrs, txt, html
@@ -24,19 +24,18 @@ App =
 # OUTPUTS ####################################
 
 window.App = App
+'''
 
-"""
-
-sassSrc = """
+sassSrc = '''
 // here the sass
-"""
+'''
 
 pugSrc = (name) ->
   """
   doctype html
   html
     head(lang='en')
-      title #{name}
+      title #name
       meta(charset='utf-8')
       meta(name='viewport', content='width=device-width,initial-scale=1')
       link(rel='stylesheet', href='style.css')
@@ -47,24 +46,23 @@ pugSrc = (name) ->
       //
   """
 
-exports.names = {
+exports.names =
   ls: 'app.ls'
   pug: 'index.pug'
   sass: 'style.sass'
-}
 
 exports.printout = (name, path) ->
   """
     {
       active: yes
-      name: #{name}
-      path: #{path}
+      name: '#name'
+      path: '#path'
       src: code.default
     }
   """
 
 exports.srcs = (selected, name) ->
   switch selected
-    when 'ls' then lsSrc
-    when 'pug' then pugSrc name
-    when 'sass' then sassSrc
+    | \ls   => lsSrc
+    | \pug  => pugSrc name
+    | \sass => sassSrc
