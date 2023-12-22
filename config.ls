@@ -10,17 +10,21 @@ exports.cfg =
   dir: ''
   id: 0
   list:
-    * active: no
-      name: 'Zombicide Decks Handler'
-      path: \zombicide_deck
-      src: code.default
     * active: yes
       name: '54 cards deck'
       path: \54_deck
       src: code.default
-    * active: yes
+    * active: no
       name: \final-diceroller
       path: \final-dr
+      src: code.default
+    * active: yes
+      name: \minesweeper
+      path: \minesweeper
+      src: code.default
+    * active: no
+      name: 'Zombicide Decks Handler'
+      path: \zombicide_deck
       src: code.default
     # svg_map
   out: ''

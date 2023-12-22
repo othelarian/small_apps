@@ -1,0 +1,49 @@
+$blocksize: 25px
+
+h1
+  text-align: center
+
+.flag
+  width: $blocksize
+  height: $blocksize
+  border: solid 1px black
+
+.menu
+  margin: 4px auto
+  text-align: center
+
+#config
+  margin: auto
+  width: fit-content
+  display: grid
+  gap: 3px
+
+  & input
+    width: 40px
+    grid-column-start: 2
+  
+  & div
+    grid-column-start: 1
+    grid-column-end: 3
+    display: inline-grid
+    justify-items: center
+  
+  & button
+    font-size: 19px
+
+#mines
+  display: none
+
+#thegrid
+  display: grid
+  margin: auto
+  gap: 2px
+  width: fit-content
+
+  & > div
+    display: inline-grid
+    width: $blocksize
+    min-width: $blocksize
+    height: $blocksize
+    background: gray
+    cursor: pointer

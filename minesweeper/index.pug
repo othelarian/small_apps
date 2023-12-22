@@ -1,0 +1,46 @@
+doctype html
+html
+  head(lang='en')
+    title mineSweeper
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width,initial-scale=1')
+    link(rel='stylesheet', href='style.css')
+    script(type='text/javascript', src='app.js')
+  body(onload='App.init()')
+    svg(
+      xmlns='http://www.w3.org/2000/svg', width='0', height='0',
+      style='display:none'
+    )
+      defs
+        g#flag
+          line(
+            x1=8, y1=5, x2=8, y2=20, stroke='black',
+            stroke-width=3, stroke-linecap='round'
+          )
+          polygon(stroke='none', fill='red', points='10,6 20,10 10,14')
+    h1 Minesweeper
+    #config
+      label(for='form-rows') number of rows:
+      input#form-rows(type='number', min=1, max=100, value=15)
+      label(for='form-columns') number of columns:
+      input#form-columns(type='number', min=1, max=100, value=10)
+      label(for='form-mines') number of mines:
+      input#form-mines(type='number', min=1, max=9999, value=40)
+      div: button(onclick='App.play()') Play!
+    #mines
+      .menu
+        button#quit(onclick='App.quit()')
+        span &nbsp;|&nbsp;Mines:&nbsp;
+        #state-play
+          span#left
+          span /
+          span#total
+        #state-fail
+          span You failed!
+          span#rest (/)
+        #state-success
+          span Success!
+        #state-end
+          span &nbsp;|&nbsp;
+          button(onclick='App.play()') Restart
+      #thegrid
