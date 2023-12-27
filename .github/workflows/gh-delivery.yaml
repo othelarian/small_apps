@@ -25,16 +25,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       #
-      #- name: Install rustup
-      #  run: curl --proto '=https' --tlsv1.2 --retry 10 --retry-connrefused --silent --show-error --fail "https://sh.rustup.rs" | sh
+      #- name: Setup Rust 
+      #  uses: dtolnay/rust-toolchain@stable
+      #  with:
+      #    #targets: x86_64-unknown-linux-gnu
+      #    targets: wasm32-unknown-unknown
       #
-      - name: Setup Rust 
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: x86_64-unknown-linux-gnu
-      #
-      - name: Install wasm-pack
-        run: cargo install wasm-pack
+      #- name: Install wasm-pack
+      #  run: cargo install wasm-pack
       #
       - name: Setup Node
         uses: actions/setup-node@v4

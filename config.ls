@@ -1,8 +1,8 @@
 code =
   default:
-    ls: [[\app.ls, \app.js ]]
-    pug: [[\index.pug, \index.html ]]
-    sass: [[\style.sass, \style.css ]]
+    ls: [[ \app.ls, \app.js ]]
+    pug: [[ \index.pug, \index.html ]]
+    sass: [[ \style.sass, \style.css ]]
 
 export cfg =
   dest: ''
@@ -32,14 +32,11 @@ export cfg =
     #
     # TODO: simon
     #
-    * active: yes
+    * active: no
       name: \wasm_test
       path: \wasm_test
-      src: [
-        []
-      ]
-      cmd:
-        wasm: \wasm
+      src: { pug: [[ \index.pug, \index.html ]] }
+      wasm: yes
     #
   out: ''
   root: { pug: [[\index.pug, \index.html ]] }

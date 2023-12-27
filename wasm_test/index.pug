@@ -1,0 +1,11 @@
+doctype html
+html
+  head
+    script(src='pkg/wasm_test.js')
+    script.
+      async function init() {
+        await wasm_bindgen();
+        wasm_bindgen.greet('Robert');
+      }
+  body(onload='init()')
+    div wasm test (must launch 'Hello, Robert!' alert at startup)

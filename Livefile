@@ -131,9 +131,55 @@ launch-server = (cb) !->
   app.listen 5001
   console.log 'dev server running on port 5001'
 
+
+
+#
+# TODO
+#
+
+task \wasm, '', !->
+  #
+  wasm-pack final-cb
+  #
+
+wasm-pack = (cb) !->
+  #
+  # TODO
+  #
+  require! {
+    buffer
+    child_process: { spawnSync }
+  }
+  #
+  console.log 'wasm pack'
+  #
+  #process.chdir \wasm_test # change cwd
+  #
+  args = [
+    \--log-level, \error, \build, \--dev, \--no-pack
+    \--no-typescript, \--target, \no-modules
+  ]
+  opts =
+    cwd: path.join process.cwd!, \wasm_test
+  r = spawnSync \wasm-pack, args, opts
+  stderr = r.stderr.toString \utf-8
+  if /error/.test stderr
+    #
+    console.log '###### ERROR! #######'
+    #
+    console.log stderr
+  else
+    #
+    console.log 'everything is fine'
+    #
+  #
+  #
+  cb void 76
+  #
+
 watching = (cb) !->
   require! chokidar
-  chkstatiq = new RegExp \statiq
+  chkstatiq = /statiq/
   watcher = chokidar.watch Object.keys cfg.chok, { awaitWriteFinish: yes }
   watcher.on \add, (pth) !->
     pth = pth.replaceAll '\\', '/'
@@ -231,5 +277,5 @@ task \serve, 'launch the server to get access to the projects', (opts) !->
   opts.github = no
   opts.release = no
   check-env opts
-  build-all!
+  #build-all!
   launch-server!
