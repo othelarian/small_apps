@@ -46,12 +46,12 @@ pugSrc = (name) ->
       //
   """
 
-exports.names =
+export names =
   ls: 'app.ls'
   pug: 'index.pug'
   sass: 'style.sass'
 
-exports.printout = (name, path) ->
+export printout = (name, path) ->
   """
     {
       active: yes
@@ -61,7 +61,7 @@ exports.printout = (name, path) ->
     }
   """
 
-exports.srcs = (selected, name) ->
+export srcs = (selected, name) ->
   switch selected
     | \ls   => lsSrc
     | \pug  => pugSrc name

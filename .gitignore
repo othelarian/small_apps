@@ -1,4 +1,11 @@
+# compilation
 dist
-node_modules
 out
+
+# node
+node_modules
 package-lock.json
+
+# wasm/rust
+target
+Cargo.lock
