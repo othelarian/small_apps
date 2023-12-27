@@ -4,7 +4,9 @@ No description
 
 ### TODO
 
-- [ ] define kanban
+- [ ] moving back from the discarded cards  
+- [ ] adding no hand  
+- [ ] adding multiple hand  
 
 ### In Progress
 

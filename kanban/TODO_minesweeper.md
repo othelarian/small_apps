@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] handling cookie  
 - [ ] timer  
 - [ ] dark mode  
 - [ ] sounds  

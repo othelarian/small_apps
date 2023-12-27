@@ -6,14 +6,16 @@ Project Description
 
 ### Todo
 
-- [ ] optional static  
-- [ ] lucide font  
+- [ ] project command (cmd)  
+- [ ] wasm compilation  
 - [ ] chokidar -> project config  
-- [ ] chokidar -> static  
 
 ### In Progress
 
+- [ ] lucide font  
 
 ### Done ✓
 
+- [x] chokidar -> static  
+- [x] optional static  
 
