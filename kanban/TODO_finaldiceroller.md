@@ -9,11 +9,11 @@ Project Description
 - [ ] minimalist layout  
 - [ ] Classic set  
 - [ ] ZC set  
-- [ ] bookmark generator command  
 
 ### In Progress
 
 
 ### Done ✓
 
+- [x] bookmark generator command  
 

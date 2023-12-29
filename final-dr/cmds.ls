@@ -1,17 +1,12 @@
-require! terser
+require! {
+  terser
+  'fs-extra': fse
+  livescript: ls
+}
 
-export bookmark = !->
-  #
-  # TODO: call from the livefile
-  #
-  # TODO: compile "bookmark.ls"
-  #
-  # TODO: terse the js
-  #
-  # TODO: add "javascript:"
-  #
-  # TODO: crete the bookmark.js
-  #
-  #
-  console.log 'bookmark here'
-  #
+export bookmark = !->>
+  r =
+    fse.readFileSync './final-dr/bookmark.ls', \utf-8
+    |> ((x) -> ls.compile x, { header: no, bare: yes })
+  r = 'javascript:' ++ (await terser.minify r).code
+  fse.writeFileSync './final-dr/bookmark.js', r
