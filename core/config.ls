@@ -21,8 +21,9 @@ export cfg =
       name: \final-diceroller
       path: \final-dr
       src: code.default
+      cmd: (cmd) !-> require! '../final-dr/cmds': module; module[cmd]!
       cmds:
-        bookmark: \get_bookmark
+        bookmark: 'generate the bookmark code'
     * active: no
       name: \minesweeper
       path: \minesweeper

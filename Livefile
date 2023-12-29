@@ -12,6 +12,7 @@ require! {
 option \cmd,     \c, \String,  'command to use (with the `cmd` task)'
 option \github,  \g, \Boolean, ''
 option \id,      \p, \Int,     'project id'
+option \list,    \l, \Boolean, 'list all command of a project'
 option \release, \r, \Boolean, ''
 option \watch,   \w, \Boolean, '(only for dev mode)'
 
@@ -215,13 +216,25 @@ task \clean, 'remove `dist`', (opts) !->
     else console.log "`#{cfg.dest}` removed successfully"
 
 task \cmd, 'execute a command in a project', (opts) !->
-  #
-  # TODO: check project id
-  #
-  # TODO: check if command exists in this project
-  #
-  console.log 'not ready'
-  #
+  opts.github = no
+  opts.release = no
+  check-env opts
+  if opts.id is void
+    console.log 'please set the project\'s id you want to call a command from'
+  else if opts.id > cfg.list.length
+    console.log 'please select a project IN THE LIST!'
+  else if cfg.list[opts.id].cmds is void
+    console.log 'please select a project WITH COMMANDS!'
+  else if opts.list?
+    console.log "List of commands in the projet '#{cfg.list[opts.id].name}':\n"
+    for cmd in Object.keys cfg.list[opts.id].cmds
+      console.log "  - #cmd => #{cfg.list[opts.id].cmds[cmd]}"
+  else if opts.cmd is void
+    console.log 'please use the --cmd or -c command option'
+  else if opts.cmd not of cfg.list[opts.id].cmds
+    console.log 'please select a command that exists in the list!'
+    console.log '(use \'cmd -p PROJECT_ID --l\' to get the list of the commands)'
+  else cfg.list[opts.id].cmd opts.cmd
 
 task \compile, 'compile one project (USE PROJECT ID!)', (opts) !->
   opts.github = no

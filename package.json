@@ -6,6 +6,7 @@
   "scripts": {
     "build": "live all",
     "clean": "live clean",
+    "cmd": "live cmd",
     "compile": "live compile",
     "github": "live -g all",
     "live": "live",
