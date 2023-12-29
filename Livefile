@@ -4,7 +4,7 @@ require! {
   bach, path, pug, sass
   'fs-extra': fse
   livescript: ls
-  './config': { cfg }
+  './core/config': { cfg }
 }
 
 # OPTIONS #############################
@@ -245,7 +245,7 @@ task \create, 'create a new project', (opts) !->
   console.log 'creating a new project...'
   require! {
     'readline-sync': readline,
-    './project-src': { names, printout, srcs }
+    './core/project-src': { names, printout, srcs }
   }
   name = readline.question '# What is its name? > '
   pth = readline.question '# What is its path? > '

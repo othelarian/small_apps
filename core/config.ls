@@ -21,7 +21,7 @@ export cfg =
       name: \final-diceroller
       path: \final-dr
       src: code.default
-      cmd:
+      cmds:
         bookmark: \get_bookmark
     * active: no
       name: \minesweeper
@@ -39,7 +39,7 @@ export cfg =
       wasm: yes
     #
   out: ''
-  root: { pug: [[\index.pug, \index.html ]] }
+  root: { pug: [[\core/index.pug, \index.html ]] }
   src: void
   statiq: []
   watching: no
