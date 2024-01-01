@@ -1,3 +1,8 @@
+mixin svgcirc(cx, fn)
+  circle.btn( cx=cx, cy=10, r=5, fill='#aaa', onclick=fn)
+- var fate = [[-2, 'D -2'], [-1, 'DIS'], [0, 'FATE'], [1, 'ADV'], [2, 'A +2']];
+- var recluse = [['d', 'DIS'],   ['n', 'RECLUSE'], ['a', 'ADV']];
+- var tinyd6 = [['d', 'Dis'], ['n', 'Tinyd6'], ['a', 'Adv']];
 doctype html
 html
   head(lang='en')
@@ -7,6 +12,61 @@ html
     link(rel='stylesheet', href='style.css')
     script(type='text/javascript', src='app.js')
   body(onload='App.init()')
-    //
-    // TODO
-    //
+    svg(xmlns='http://www.w3.org/2000/svg', style='display:none')
+    #diceroller.cols
+      .core
+        select#the-selector(onchange='App.select()')
+          option(value='classic', selected) Classic set
+          option(value='other1') Recluse, Fate, Tinyd6, ZC set
+        #classic-set.set
+          .dice
+            each v in [2, 3, 4, 6, 8]
+              button(onclick='App.sets.classic.roll('+v+')')= 'D'+v
+          .dice
+            each v in [10, 12, 20, 100]
+              button(onclick='App.sets.classic.roll('+v+')')= 'D'+v
+          .special
+            span Special :
+            input#classic-special(type='number', value=42, min=2)
+            button(onclick="App.sets.classic.roll('s')") Roll
+            span &nbsp;|&nbsp; Dis&nbsp;
+            .tog-selector
+              svg(width=60, height=20)
+                each v in [[9, -1], [30, 0], [51, 1]]
+                  +svgcirc(v[0], 'App.sets.classic.advdis('+v[1]+')')
+                circle#classic-advdis(cx=30, cy=10, r=8)
+            span &nbsp;Adv
+        #other1-set.set
+          div
+            each v in recluse
+              button(onclick="App.sets.other1.roll('recluse', '"+v[0]+"')")= v[1]
+          div
+            each v in fate
+              button(onclick="App.sets.other1.roll('fate', '"+v[0]+"')")= v[1]
+          .special
+            each v in tinyd6
+              button(onclick="App.sets.other1.roll('tinyd6', '"+v[0]+"')")= v[1]
+            span &nbsp;|&nbsp;
+            .tog-selector
+              svg(width=40, height=20)
+                each v in [[9, 0], [30, 1]]
+                  +svgcirc(v[0], "App.sets.other1.advdis('tinyd6', "+v[1]+")")
+                circle#other1-tinyad(cx=9, cy=10, r=8)
+            span &nbsp;Focus
+          .zc
+            span ZC:&nbsp;
+            div
+              each v in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                button(onclick="App.sets.other1.roll('zc', "+v+")")= v
+                if v == 6
+                  br
+      .result
+        .res-lab Result:
+        #res-show
+      .flip
+        button(onclick='App.flip()') See past rolls
+    #history.cols
+      .flip
+        button(onclick='App.flip()') Back to dice
+      .title Past rolls:
+      #results

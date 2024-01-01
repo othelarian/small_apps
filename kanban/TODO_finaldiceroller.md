@@ -6,14 +6,22 @@ Project Description
 
 ### Todo
 
-- [ ] minimalist layout  
-- [ ] Classic set  
-- [ ] ZC set  
+- [ ] Other => charge  
 
 ### In Progress
 
 
 ### Done ✓
 
+- [x] Other => ZC  
+- [x] Other => Tinyd6  
+- [x] Other => recluse  
+- [x] Other => Fate  
+- [x] Classic set  
+- [x] history of rolls  
+- [x] common set & keep fns  
+- [x] Result handling  
+- [x] resize flip  
+- [x] minimalist layout  
 - [x] bookmark generator command  
 
