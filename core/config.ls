@@ -17,7 +17,7 @@ export cfg =
     #
     # TODO: clock
     #
-    * active: no
+    * active: yes
       name: \final-diceroller
       path: \final-dr
       src: code.default
