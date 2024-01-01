@@ -1,8 +1,13 @@
+mixin appbtn(sys, v)
+  button(onclick="App.sets.other.roll('"+sys+"', '"+v[0]+"')")= v[1]
 mixin svgcirc(cx, fn)
   circle.btn( cx=cx, cy=10, r=5, fill='#aaa', onclick=fn)
+
 - var fate = [[-2, 'D -2'], [-1, 'DIS'], [0, 'FATE'], [1, 'ADV'], [2, 'A +2']];
+- var pbta = [['d', 'Dis'], ['n', 'PbtA'], ['a', 'Adv']];
 - var recluse = [['d', 'DIS'],   ['n', 'RECLUSE'], ['a', 'ADV']];
 - var tinyd6 = [['d', 'Dis'], ['n', 'Tinyd6'], ['a', 'Adv']];
+
 doctype html
 html
   head(lang='en')
@@ -18,6 +23,7 @@ html
         select#the-selector(onchange='App.select()')
           option(value='classic', selected) Classic set
           option(value='other1') Recluse, Fate, Tinyd6, ZC set
+          option(value='other2') PbtA set
         #classic-set.set
           .dice
             each v in [2, 3, 4, 6, 8]
@@ -36,30 +42,34 @@ html
                   +svgcirc(v[0], 'App.sets.classic.advdis('+v[1]+')')
                 circle#classic-advdis(cx=30, cy=10, r=8)
             span &nbsp;Adv
-        #other1-set.set
+        #other1-set.other.set
           div
             each v in recluse
-              button(onclick="App.sets.other1.roll('recluse', '"+v[0]+"')")= v[1]
+              +appbtn('recluse', v)
           div
             each v in fate
-              button(onclick="App.sets.other1.roll('fate', '"+v[0]+"')")= v[1]
+              +appbtn('fate', v)
           .special
             each v in tinyd6
-              button(onclick="App.sets.other1.roll('tinyd6', '"+v[0]+"')")= v[1]
+              +appbtn('tinyd6', v)
             span &nbsp;|&nbsp;
             .tog-selector
               svg(width=40, height=20)
                 each v in [[9, 0], [30, 1]]
-                  +svgcirc(v[0], "App.sets.other1.advdis('tinyd6', "+v[1]+")")
+                  +svgcirc(v[0], "App.sets.other.advdis('tinyd6', "+v[1]+")")
                 circle#other1-tinyad(cx=9, cy=10, r=8)
             span &nbsp;Focus
           .zc
             span ZC:&nbsp;
             div
               each v in [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-                button(onclick="App.sets.other1.roll('zc', "+v+")")= v
+                button(onclick="App.sets.other.roll('zc', "+v+")")= v
                 if v == 6
                   br
+        #other2-set.other.set
+          div
+            each v in pbta
+              +appbtn('pbta', v)
       .result
         .res-lab Result:
         #res-show

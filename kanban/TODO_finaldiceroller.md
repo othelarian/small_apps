@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] Other 2 => C+  
 - [ ] Other => charge  
 
 ### In Progress
@@ -13,6 +14,7 @@ Project Description
 
 ### Done ✓
 
+- [x] Other => PbtA  
 - [x] Other => ZC  
 - [x] Other => Tinyd6  
 - [x] Other => recluse  

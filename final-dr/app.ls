@@ -69,7 +69,7 @@ CommonSet =
 
 # OTHER SET ##################################
 
-Other1Set =
+OtherSet =
   curr-tinyad: 0
   advdis: (sys, mode) !->
     switch sys
@@ -90,11 +90,23 @@ Other1Set =
         tt =
           if mode is \0 then rolls.reduce ((a, n) -> n + a), 0
           else
-            kr = if mode < 0 then \kl else \kh
-            kr = App.sets.common[kr] 4, rolls
+            kr = App.sets.common[ if mode < 0 then \kl else \kh ] 4, rolls
             rolls = App.sets.common.bold kr.ids, rolls
             kr.values.reduce ((a, n) -> n + a)
         "Fate#tm: [#{rolls.join ', '}] => #tt"
+      | \pbta
+        rs = [(rand2 6), rand2 6]
+        advdis = (kn, rs) ->
+          rs.push (rand2 6)
+          kr = App.sets.common[kn] 2, rs
+          #
+          rs = App.sets.common.bold kr.ids, rs
+          [kr.values[0] + kr.values[1], rs]
+        [tt, rs, tm] = switch mode
+          | \a => (advdis \kh, rs) ++ [' (adv)']
+          | \d => (advdis \kl, rs) ++ [' (dis)']
+          | \n => [rs[0] + rs[1], rs, '']
+        "PbtA#tm: [#{rs.join ', '}] => #tt"
       | \recluse
         to-bold = (arr) ->
           arr.push (rand2 6)
@@ -190,7 +202,7 @@ App =
   sets:
     classic: ClassicSet
     common: CommonSet
-    other1: Other1Set
+    other: OtherSet
 
 # OUTPUTS ####################################
 
