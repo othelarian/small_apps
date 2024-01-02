@@ -6,15 +6,16 @@ Project Description
 
 ### Todo
 
-- [ ] chokidar -> project config  
+- [ ] terser for release  
 
 ### In Progress
 
 - [ ] wasm compilation  
-- [ ] lucide font  
 
 ### Done ✓
 
+- [x] lucide font  
+- [x] chokidar -> font config  
 - [x] project command (cmd)  
 - [x] chokidar -> static  
 - [x] optional static  

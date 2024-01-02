@@ -11,13 +11,7 @@ html
       xmlns='http://www.w3.org/2000/svg', width='0', height='0',
       style='display:none'
     )
-      defs
-        g#flag
-          line(
-            x1=8, y1=5, x2=8, y2=20, stroke='black',
-            stroke-width=3, stroke-linecap='round'
-          )
-          polygon(stroke='none', fill='red', points='10,6 20,10 10,14')
+      defs#hsf!= fonts
     h1 Minesweeper
     #config
       label(for='form-rows') number of rows:
@@ -27,10 +21,17 @@ html
       label(for='form-mines') number of mines:
       input#form-mines(type='number', min=1, max=9999, value=40)
       div: button(onclick='App.play()') Play!
+    #load-save
+      //
+      // TODO: loading the last game
+      //
     #mines
       .menu
         button#quit(onclick='App.quit()')
         span &nbsp;|&nbsp;Mines:&nbsp;
+        //
+        // TODO: adding timer
+        //
         #state-play
           span#left
           span /
@@ -44,3 +45,14 @@ html
           span &nbsp;|&nbsp;
           button(onclick='App.play()') Restart
       #thegrid
+      //
+      // TODO: pause mode
+      //
+      #pause-veil
+      //
+    .details
+      //
+      // TODO: sound on/off
+      //
+      // TODO: dark mode
+      //

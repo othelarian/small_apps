@@ -9,6 +9,7 @@ export cfg =
   dest_path: { debug: \dist, release: \out, github: \docs }
   dir: ''
   id: 0
+  fonts: void
   list:
     * active: yes
       name: '54 cards deck'
@@ -29,7 +30,7 @@ export cfg =
       path: \minesweeper
       src: code.default
       statiq: yes
-      font: yes
+      font: [ \minesweeper/index.pug ]
     #
     # TODO: simon
     #

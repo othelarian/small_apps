@@ -35,7 +35,7 @@ build-all = !->
 
 build-end = (cb) !->
   console.log "building [ #{cfg.list[cfg.id].name} ] DONE"
-  cfg.id += 1
+  if not cfg.watching then cfg.id += 1
   cb void 22
 
 build-start = (cb) !->
@@ -117,12 +117,23 @@ final-cb = (e, r) !->
     console.log e
 
 get-font = (cb) ->
-  #
-  # TODO
-  #
-  console.log 'loading the font'
-  #
-  cb void 18
+  pth = "#{cfg.dir}/font.ls"
+  if not cfg.fonts? # first time
+    require! { 'lucide-static': lucide }
+    if cfg.watching then cfg.chok[pth.substring 2] = cfg.list[cfg.id].font
+  try
+    d = fse.readFileSync pth, \utf8
+    f = (ls.compile d, { json: yes } |> JSON.parse).fonts
+    clip = (h, s) ->
+      s = s.substring s.search('>') + 2
+      s = s.split '\n'
+      while s[s.length - 1] is '</svg>' or s[s.length - 1] is '' then s.pop()
+      s = s.map (e) -> e.trim()
+      "<symbol id=\"#{h}\">" + (s.join '') + '</symbol>'
+    cfg.fonts = (f.map (elt) -> clip elt, lucide[elt]) .join ''
+    cb void 18
+  catch e
+    cb e, void
 
 launch-server = (cb) !->
   console.log 'launching dev server...'
@@ -190,10 +201,11 @@ watching = (cb) !->
   watcher.on \change, (pth) !->
     pth = pth.replaceAll '\\', '/'
     if pth[0] is \. then pth.slice 2
-    #
-    # TODO: add font
-    #
     if chkstatiq.test pth then copy-statiq final-cb
+    else if /font/.test pth
+      get-font final-cb
+      for fle in cfg.chok[pth]
+        do-exec fle, cfg.chok[fle].outf, cfg.chok[fle].lg
     else
       console.log "recompiling: '#pth'"
       do-exec pth, cfg.chok[pth].outf, cfg.chok[pth].lg
