@@ -1,9 +1,15 @@
 # UTILS ######################################
 
-function c-elt tag, attrs, txt, html
-  elt = document.createElement tag
-  for k, v of attrs then elt.setAttribute k, v
-  if txt? then elt.innerText = txt
+# svg => to handle svg text tag
+function c-elt tag, attrs, txt, html, svg = no
+  elt =
+    if svg then document.createElementNS 'http://www.w3.org/2000/svg', tag
+    else document.createElement tag
+  for k, v of attrs
+    if svg then elt.setAttributeNS void, k, v
+    else elt.setAttribute k, v
+  if svg and txt? then elt.textContent = txt
+  else if txt? then elt.innerText = txt
   else if html? then elt.innerHTML = html
   elt
 
@@ -18,8 +24,8 @@ function rand2 m
 
 ClassicSet =
   advdis: (set) !->
-    defv = (v) -> | v is -1 => 9 | v is 0 => 30 | v is 1 => 51
-    App.toggle \#classic-advdis, (defv App.sets.classic.curr-advdis), defv set
+    startv = App.tog-val 3, App.sets.classic.curr-advdis
+    App.toggle \#classic-advdis, [{cx: startv}, {cx: App.tog-val 3, set}]
     App.sets.classic.curr-advdis = set
   curr-advdis: 0
   roll: (v) !->
@@ -67,20 +73,53 @@ CommonSet =
   kh: (n, rolls) -> App.sets.common.keep n, ((a, b) -> a > b), rolls
   kl: (n, rolls) -> App.sets.common.keep n, ((a, b) -> a < b), rolls
 
+# D&G SUB SET ################################
+
+DagSubSet =
+  circ: (mode) !-> App.sets.other.dag.swap \circ, mode
+  comp: (mode) !-> App.sets.other.dag.swap \comp, mode
+  currcirc: 0
+  currcomp: 0
+  currfocus: 0
+  dice-val: (mode) -> switch mode | -1 => 6 | 0 => 8 | 1 => 10
+  focus: (mode) !->
+    startv = App.tog-val 2, App.sets.other.dag.currfocus
+    endv = App.tog-val 2, mode
+    App.toggle \#other2-dagfocus, [{cx: startv}, {cx: endv}]
+    col = if mode is 0 then \black else \green
+    q-sel \#other2-dagfocus .setAttribute \fill, col
+    App.sets.other.dag.currfocus = mode
+  roll: ->
+    dcirc = App.sets.other.dag.dice-val App.sets.other.dag.currcirc
+    dcomp = App.sets.other.dag.dice-val App.sets.other.dag.currcomp
+    rcirc = rand2 dcirc
+    rcomp = rand2 dcomp
+    [ft ,fc] =
+      if App.sets.other.dag.currfocus is 1 then [' (Inspiration))', yes]
+      else ['', no]
+    bst = if rcirc > rcomp then rcirc else rcomp
+    tt = if bst >= (if fc then 5 else 6) then 'SUCCES!' else 'ECHEC!'
+    "D&G:#ft<br/>Compétence (d#dcomp) : #rcomp<br/>" ++
+      "Circonstance (d#dcirc) : #rcirc<br/>=> #tt"
+  swap: (id, mode) !->
+    startv = App.tog-val 3, App.sets.other.dag["curr#id"]
+    endv = App.tog-val 3, mode
+    App.toggle "\#other2-dag#id", [{cx: startv}, {cx: endv}]
+    t = q-sel "\#other2-dag#{id}-text"
+    t.style.display = \none
+    t.textContent = App.sets.other.dag.dice-val mode
+    t.setAttributeNS void, \x, endv
+    window.setTimeout (!~> t.style.display = \block), 200
+    App.sets.other.dag["curr#id"] = mode
+
 # OTHER SET ##################################
 
 OtherSet =
-  curr-tinyad: 0
-  advdis: (sys, mode) !->
-    switch sys
-      | \tinyd6
-        defv = (v) -> | v is 0 => 9 | v is 1 => 30
-        App.toggle \#other1-tinyad , (defv App.sets.other1.curr-tinyad), defv mode
-        col = if mode is 0 then \black else \green
-        q-sel \#other1-tinyad .setAttribute \fill, col
-        App.sets.other1.curr-tinyad = mode
+  currtinyad: 0
+  dag: DagSubSet
   roll: (sys, mode) !->
     r = switch sys
+      | \dag => App.sets.other.dag.roll!
       | \fate
         [md, tm, bn] =
           if mode is 0 then [\n, '', 0]
@@ -99,7 +138,6 @@ OtherSet =
         advdis = (kn, rs) ->
           rs.push (rand2 6)
           kr = App.sets.common[kn] 2, rs
-          #
           rs = App.sets.common.bold kr.ids, rs
           [kr.values[0] + kr.values[1], rs]
         [tt, rs, tm] = switch mode
@@ -138,7 +176,7 @@ OtherSet =
           bst = a.values[0]
           rs = App.sets.common.bold a.ids, rs
         tm = switch mode | mode is \d => ' (dis)' | mode is \a => ' (adv)' | _ => ''
-        dif = 4 - App.sets.other1.curr-tinyad
+        dif = 4 - App.sets.other.currtinyad
         tt = if bst > dif then 'SUCCESS!' else 'FAILED'
         "Tinyd6#tm: [#{rs.join ', '}] => #tt"
       | \zc
@@ -162,6 +200,12 @@ OtherSet =
         out ++ "==> Molotov: #{acc.mol}, ZH: #{acc.zh}"
       | _ => alert 'Oops, something gone wrong here'; ''
     if r isnt '' then App.roll r
+  tinyad: (mode) !->
+    startv = (App.tog-val 2, App.sets.other.currtinyad)
+    App.toggle \#other1-tinyad , [{cx: startv}, {cx: App.tog-val 2, mode}]
+    col = if mode is 0 then \black else \green
+    q-sel \#other1-tinyad .setAttribute \fill, col
+    App.sets.other.currtinyad = mode
 
 # CORE #######################################
 
@@ -192,12 +236,13 @@ App =
   show: (v) !->
     App.curr-set = v
     q-sel "\##{v}-set" .style.display = \block
-  toggle: (id, start, end) !->
-    tranf = [{transform: "translate(#{end - start}px)"}]
-    opts = {duration: 250, iteration: 1}
-    e = q-sel id
-    window.setTimeout (~> q-sel id .setAttribute \cx, end), 250
-    e.animate tranf, opts
+  toggle: (id, tranf) !->
+    q-sel id .animate tranf, { duration: 200, fill: \forwards }
+  tog-val: (nb, mode) ->
+    | nb is 2
+      switch mode | 0 => 9 | 1 => 30
+    | nb is 3
+      switch mode | -1 => 9 | 0 => 30 | 1 => 51
   # SETS
   sets:
     classic: ClassicSet

@@ -2,6 +2,18 @@ mixin appbtn(sys, v)
   button(onclick="App.sets.other.roll('"+sys+"', '"+v[0]+"')")= v[1]
 mixin svgcirc(cx, fn)
   circle.btn( cx=cx, cy=10, r=5, fill='#aaa', onclick=fn)
+mixin svgtog(nb, fn, cid)
+  .tog-selector(style!=attributes.style)
+    svg(width=20 * nb, height=20)
+      -
+        var t = [[9, -1], [30, 0]];
+        if (nb == 2) { t[0][1] = 0; t[1][1] = 1; }
+        else { t.push([51, 1]); }
+      each v in t
+        +svgcirc(v[0], 'App.sets.'+fn+'('+v[1]+')')
+      circle(id=cid, cx=((nb == 2)? 9:30), cy=10, r=8)
+      if block
+        block
 
 - var fate = [[-2, 'D -2'], [-1, 'DIS'], [0, 'FATE'], [1, 'ADV'], [2, 'A +2']];
 - var pbta = [['d', 'Dis'], ['n', 'PbtA'], ['a', 'Adv']];
@@ -23,7 +35,7 @@ html
         select#the-selector(onchange='App.select()')
           option(value='classic', selected) Classic set
           option(value='other1') Recluse, Fate, Tinyd6, ZC set
-          option(value='other2') PbtA set
+          option(value='other2') PbtA, D&amp;G set
         #classic-set.set
           .dice
             each v in [2, 3, 4, 6, 8]
@@ -36,11 +48,7 @@ html
             input#classic-special(type='number', value=42, min=2)
             button(onclick="App.sets.classic.roll('s')") Roll
             span &nbsp;|&nbsp; Dis&nbsp;
-            .tog-selector
-              svg(width=60, height=20)
-                each v in [[9, -1], [30, 0], [51, 1]]
-                  +svgcirc(v[0], 'App.sets.classic.advdis('+v[1]+')')
-                circle#classic-advdis(cx=30, cy=10, r=8)
+            +svgtog(3, 'classic.advdis', 'classic-advdis')
             span &nbsp;Adv
         #other1-set.other.set
           div
@@ -53,11 +61,7 @@ html
             each v in tinyd6
               +appbtn('tinyd6', v)
             span &nbsp;|&nbsp;
-            .tog-selector
-              svg(width=40, height=20)
-                each v in [[9, 0], [30, 1]]
-                  +svgcirc(v[0], "App.sets.other.advdis('tinyd6', "+v[1]+")")
-                circle#other1-tinyad(cx=9, cy=10, r=8)
+            +svgtog(2, 'other.tinyad', 'other1-tinyad')
             span &nbsp;Focus
           .zc
             span ZC:&nbsp;
@@ -70,6 +74,23 @@ html
           div
             each v in pbta
               +appbtn('pbta', v)
+          #dag
+            div(style='grid-row:1 / 3') D&amp;G:
+            div(style='grid-row:1 / 3') &nbsp;|&nbsp;
+            div(style='grid-column:3') Comp. :
+            div(style='grid-column:3') Circ. :
+            +svgtog(3, 'other.dag.comp', 'other2-dagcomp'
+            )(style='grid-column:4;grid-row:1')
+              text#other2-dagcomp-text(x=30, y=14) 8
+            +svgtog(3, 'other.dag.circ', 'other2-dagcirc'
+            )(style='grid-column:4')
+              text#other2-dagcirc-text(x=30, y=14) 8
+            div(style='grid-column:5;grid-row:1 / 3') &nbsp;|&nbsp;
+            div(style='grid-column:6;grid-row:1') Inspiration:
+            +svgtog(2, 'other.dag.focus', 'other2-dagfocus'
+            )(style='grid-column:7;grid-row:1')
+            div(style='grid-column:6 / 8;grid-row:2')
+              button(onclick="App.sets.other.roll('dag')") Roll
       .result
         .res-lab Result:
         #res-show

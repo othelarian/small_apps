@@ -14,6 +14,7 @@ Project Description
 
 ### Done ✓
 
+- [x] Other 2 => D&G  
 - [x] Other => PbtA  
 - [x] Other => ZC  
 - [x] Other => Tinyd6  
