@@ -6,7 +6,6 @@ Project Description
 
 ### Todo
 
-- [ ] terser for release  
 
 ### In Progress
 
@@ -14,6 +13,7 @@ Project Description
 
 ### Done ✓
 
+- [x] terser for release  
 - [x] lucide font  
 - [x] chokidar -> font config  
 - [x] project command (cmd)  

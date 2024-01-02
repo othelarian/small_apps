@@ -1,7 +1,7 @@
 # REQUIRES ############################
 
 require! {
-  bach, path, pug, sass
+  bach, path, pug, sass, terser
   'fs-extra': fse
   livescript: ls
   './core/config': { cfg }
@@ -55,9 +55,9 @@ building = (pcfg) ->
 
 check-env = (opts) !->
   [cfg.dest, cfg.release, cfg.github] = switch
-    | opts.github  => [cfg.dest_path.github,   yes, yes]
-    | opts.release => [cfg.dest_path.releaase, yes, no]
-    | _            => [cfg.dest_path.debug,    no,  no]
+    | opts.github  => [cfg.dest_path.github,  yes, yes]
+    | opts.release => [cfg.dest_path.release, yes, no]
+    | _            => [cfg.dest_path.debug,   no,  no]
 
 compile-src = (cb) !->
   in-lst = (lg, fc) !->
@@ -99,10 +99,13 @@ copy-statiq = (cb, prep = no) !->>
       cb e, void
   else cb 'ERROR: no statiq file to copy' void
 
-do-exec = (inf, outf, sel) !-->
+do-exec = (inf, outf, sel) !-->>
   try
     r = switch sel
-      | \ls   => fse.readFileSync inf, \utf-8 |> ls.compile
+      | \ls
+        c = fse.readFileSync inf, \utf-8 |> ls.compile
+        if cfg.release or cfg.github then (await terser.minify c).code
+        else c
       | \pug  => pug.renderFile inf, cfg
       | \sass => (sass.compile inf, { style: \compressed }).css
     fse.writeFileSync outf, r
