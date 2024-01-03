@@ -25,7 +25,8 @@ function rand2 m
 ClassicSet =
   advdis: (set) !->
     startv = App.tog-val 3, App.sets.classic.curr-advdis
-    App.toggle \#classic-advdis, [{cx: startv}, {cx: App.tog-val 3, set}]
+    tranf = [{cx: "#{startv}px"}, {cx: "#{App.tog-val 3, set}px"}]
+    App.toggle \#classic-advdis, tranf
     App.sets.classic.curr-advdis = set
   curr-advdis: 0
   roll: (v) !->
@@ -85,7 +86,7 @@ DagSubSet =
   focus: (mode) !->
     startv = App.tog-val 2, App.sets.other.dag.currfocus
     endv = App.tog-val 2, mode
-    App.toggle \#other2-dagfocus, [{cx: startv}, {cx: endv}]
+    App.toggle \#other2-dagfocus, [{cx: "#{startv}px"}, {cx: "#{endv}px"}]
     col = if mode is 0 then \black else \green
     q-sel \#other2-dagfocus .setAttribute \fill, col
     App.sets.other.dag.currfocus = mode
@@ -104,7 +105,7 @@ DagSubSet =
   swap: (id, mode) !->
     startv = App.tog-val 3, App.sets.other.dag["curr#id"]
     endv = App.tog-val 3, mode
-    App.toggle "\#other2-dag#id", [{cx: startv}, {cx: endv}]
+    App.toggle "\#other2-dag#id", [{cx: "#{startv}px"}, {cx: "#{endv}px"}]
     t = q-sel "\#other2-dag#{id}-text"
     t.style.display = \none
     t.textContent = App.sets.other.dag.dice-val mode
@@ -202,7 +203,8 @@ OtherSet =
     if r isnt '' then App.roll r
   tinyad: (mode) !->
     startv = (App.tog-val 2, App.sets.other.currtinyad)
-    App.toggle \#other1-tinyad , [{cx: startv}, {cx: App.tog-val 2, mode}]
+    tranf = [{cx: "#{startv}px"}, {cx: "#{App.tog-val 2, mode}px"}]
+    App.toggle \#other1-tinyad , tranf
     col = if mode is 0 then \black else \green
     q-sel \#other1-tinyad .setAttribute \fill, col
     App.sets.other.currtinyad = mode
@@ -215,6 +217,8 @@ App =
   init: !->
     window.addEventListener 'resize', App.resize
     App.show \classic
+    # firefox hack
+    q-sel \#the-selector .value = \classic
   flip: !->
     if App.curr-flip
       for col in document.querySelectorAll \.cols then col.removeAttribute \style
