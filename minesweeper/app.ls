@@ -13,6 +13,17 @@ function q-sel s, a = no
 
 function rand2 m then Math.floor (Math.random! * m)
 
+# COOKIE #####################################
+
+Cookie =
+  check: !->
+    cookies = {}
+    for elt in (document.cookie.split '; ')
+      t = elt.split \=;cookies[t[0]] = t[1]
+    if \ms-theme of cookies then Settings.theme cookies['ms-theme']
+    if \ms-sound of cookies then Settings.sound cookies['ms-sound']
+  set: (key, mode) !-> document.cookie = "ms-#key=#mode"
+
 # LS #########################################
 
 LS =
@@ -30,27 +41,60 @@ LS =
   prop: (prop) -> localStorage.hasOwnProperty "ms-#prop"
   set: (key, value) !-> localStorage.setItem "ms-#key", value
 
+# SETTINGS ###################################
+
+Settings =
+  currsound: 1
+  currtheme: 1
+  sound: (mode) !->
+    if typeof mode is \string then mode = parseInt mode
+    if mode isnt Settings.currsound
+      q-sel \#set-sound-c .setAttribute \cx, (if mode is 0 then 10 else 33)
+      Settings.currsound = mode
+      Cookie.set \sound, mode
+  theme: (mode) !->
+    if typeof mode is \string then mode = parseInt mode
+    [
+      alt-a-col, base-col, inv-col
+      cx
+    ] = switch mode
+      | 0
+        [\#777, \#333, \white, 10]
+      | 1
+        [\#ddd, \white, \#333, 33]
+    if mode isnt Settings.currtheme
+      stl = document.body.style
+      stl.setProperty \--alt-a-col, alt-a-col
+      stl.setProperty \--base-col, base-col
+      stl.setProperty \--inv-col, inv-col
+      q-sel \#set-theme-c .setAttribute \cx, cx
+      Settings.currtheme = mode
+    Cookie.set \theme, mode
+
 # CORE #######################################
 
 App =
-  cfg: { rows: 15, columns: 10, mines: 40, b: [], h: [] }
+  cfg:
+    rows: 15, columns: 10, mines: 40, b: [], h: []
+  flag: (x, y, evt) !->
+    evt.preventDefault!
+    #
+    # TODO: show a flag and switch to block
+    #
+    q-sel "\#cell-#x-#y"
+    |> console.log
+    #
+    #
   init: !->
     if LS.check!
-      #
-      console.log 'LS available'
-      #
       if LS.get \game
         #
         console.log 'there is a game!'
         #
-        #
+        # TODO
         #
       #
-    #
-    # TODO: check for localStorage ?
-    #
-    console.log 'init app'
-    #
+    Cookie.check!
   load: !->
     may-add = (x, y) -> if App.cfg.b[x][y] is -1 then 1 else 0
     thegrid = q-sel \#thegrid
@@ -103,6 +147,9 @@ App =
           alert "You entered a bad balue for the #{elt.slice 5}"
           no
         else
+          #
+          # TODO: check for row and column max value
+          #
           App.cfg[elt.slice 5] = v
           true
     if [\form-rows, \form-columns, \form-mines ].reduce check, yes
@@ -122,15 +169,6 @@ App =
         @cfg.h = []
         LS.set \game, JSON.stringify { b: @cfg.b, h: [] }
         @load!
-  flag: (x, y, evt) !->
-    evt.preventDefault!
-    #
-    # TODO: show a flag and switch to block
-    #
-    q-sel "\#cell-#x-#y"
-    |> console.log
-    #
-    #
   quit: !->
     q-sel \#mines .style.display = \none
     q-sel \#config .style.display = \grid
@@ -156,6 +194,7 @@ App =
         #
         console.log 'oups'
         #
+  settings: (entry, mode) !-> Settings[entry] mode
 
 # OUTPUTS ####################################
 

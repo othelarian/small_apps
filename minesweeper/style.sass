@@ -1,5 +1,17 @@
 $blocksize: 25px
 
+body
+  --alt-a-col: #ddd
+  --base-col: white
+  --inv-col: #333
+  background: var(--base-col)
+  color: var(--inv-col)
+
+button
+  border-color: var(--inv-col)
+  background: var(--base-col)
+  color: var(--inv-col)
+
 h1
   text-align: center
 
@@ -11,6 +23,40 @@ h1
 .menu
   margin: 4px auto
   text-align: center
+
+.settings
+  margin: 5px auto
+  display: flex
+  justify-content: center
+  gap: 10px
+
+  .tog-settings
+    display: inline-block
+    user-select: none
+    margin: 0
+
+    & svg
+      border: solid 1px
+      border-radius: 10px
+
+      & line
+        fill: none
+        stroke: var(--alt-a-col)
+        stroke-width: 14px
+        stroke-linecap: round
+
+      & .font
+        stroke: var(--inv-col)
+        fill: none
+        stroke-width: 2
+        stroke-linecap: round
+        stroke-linejoin: round
+        transform: scale(0.6)
+
+      & .set-select
+        fill: var(--base-col)
+        stroke: var(--inv-col)
+        stroke-width: 2px
 
 #config
   margin: auto

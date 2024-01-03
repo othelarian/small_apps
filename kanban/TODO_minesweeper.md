@@ -6,9 +6,7 @@ Project Description
 
 ### Todo
 
-- [ ] handling cookie  
 - [ ] timer  
-- [ ] dark mode  
 - [ ] sounds  
 - [ ] saving progression  
 - [ ] reload data from ls  
@@ -21,6 +19,9 @@ Project Description
 
 ### Done ✓
 
+- [x] cookie (settings)  
+- [x] dark mode  
+- [x] sounds settings  
 - [x] value generator  
 - [x] mine generator  
 - [x] sass for the grid  

@@ -1,7 +1,5 @@
 mixin appbtn(sys, v)
   button(onclick="App.sets.other.roll('"+sys+"', '"+v[0]+"')")= v[1]
-mixin svgcirc(cx, fn)
-  circle.btn( cx=cx, cy=10, r=5, fill='#aaa', onclick=fn)
 mixin svgtog(nb, fn, cid)
   .tog-selector(style!=attributes.style)
     svg(width=20 * nb, height=20)
@@ -10,7 +8,10 @@ mixin svgtog(nb, fn, cid)
         if (nb == 2) { t[0][1] = 0; t[1][1] = 1; }
         else { t.push([51, 1]); }
       each v in t
-        +svgcirc(v[0], 'App.sets.'+fn+'('+v[1]+')')
+        circle.btn(
+          cx=v[0], cy=10, r=5, fill='#aaa',
+          onclick='App.sets.'+fn+'('+v[1]+')'
+        )
       circle(id=cid, cx=((nb == 2)? 9:30), cy=10, r=8)
       if block
         block
