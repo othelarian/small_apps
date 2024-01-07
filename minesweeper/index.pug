@@ -6,9 +6,8 @@ mixin togsetting(left, right, fn, id)
       use.font(id=id+'-l', y=4, x=6, height=24, href='#'+left)
       use.font(id=id+'-r', y=4, x=43, height=24, href='#'+right)
       each v in [[10, 0], [33, 1]]
-        circle(
-          fill='#fff0', cx=v[0], cy=10, r=10,
-          onclick="App.settings('"+fn+"',"+v[1]+')'
+        circle.toggler(
+          cx=v[0], cy=10, r=10, onclick="App.settings('"+fn+"',"+v[1]+')'
         )
 
 doctype html
@@ -19,12 +18,17 @@ html
     meta(name='viewport', content='width=device-width,initial-scale=1')
     link(rel='stylesheet', href='style.css')
     script(type='text/javascript', src='app.js')
-  body(onload='App.init()')
+  body(onload='App.init()', onunload='App.close()')
     svg(
       xmlns='http://www.w3.org/2000/svg', width='0', height='0',
       style='display:none'
     )
       defs#hsf!= fonts
+    audio#aud-explosion(src='statiq/explosion.wav')
+    audio#aud-flag(src='statiq/flag.wav')
+    audio#aud-reveal(src='statiq/reveal.wav')
+    audio#aud-success(src='statiq/success.wav')
+    audio#aud-unflag(src='statiq/unflag.wav')
     h1 Minesweeper
     #config
       label(for='form-rows') number of rows:
@@ -35,40 +39,31 @@ html
       input#form-mines(type='number', min=1, max=9999, value=40)
       div: button(onclick='App.play()') Play!
     #load-save
-      //
-      // TODO: loading the last game
-      //
+      div.
+        We found some data about a minesweeper you didn't finish.
+        Do you want to go back where you let the game last time?
+      div
+        button(onclick='App.cancel()') No
+        button(onclick='App.reload()') Yes
     .settings
       +togsetting('moon', 'sun', 'theme', 'set-theme')
       +togsetting('volumeX', 'volume2', 'sound', 'set-sound')
     #mines
       .menu
-        button#quit(onclick='App.quit()')
-        span &nbsp;|&nbsp;Mines:&nbsp;
-        //
-        // TODO: adding timer
-        //
+        button#quit(onclick='App.quit()') Quit
+        span &nbsp;|&nbsp;
+        #timer
+          div#time-curr 00:00
+          button#time-play(onclick='App.pause()') Pause
+        span &nbsp;|&nbsp;
+        #state-fail
+          span You failed!&nbsp;
         #state-play
+          span Mines:&nbsp;
           span#left
           span /
           span#total
-        #state-fail
-          span You failed!
-          span#rest (/)
         #state-success
           span Success!
-        #state-end
-          span &nbsp;|&nbsp;
-          button(onclick='App.play()') Restart
       #thegrid
-      //
-      // TODO: pause mode
-      //
-      #pause-veil
-      //
-    .details
-      //
-      // TODO: sound on/off
-      //
-      // TODO: dark mode
-      //
+      #pause-veil PAUSE

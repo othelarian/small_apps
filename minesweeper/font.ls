@@ -1,5 +1,7 @@
 fonts:
-  \flagTriangleRight
+  \bomb
+  \flag
+  \flagOff
   \moon
   \sun
   \volume2

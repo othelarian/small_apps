@@ -25,7 +25,7 @@ export cfg =
       cmd: (cmd) !-> require! '../final-dr/cmds': module; module[cmd]!
       cmds:
         bookmark: 'generate the bookmark code'
-    * active: no
+    * active: yes
       name: \minesweeper
       path: \minesweeper
       src: code.default

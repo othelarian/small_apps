@@ -6,19 +6,20 @@ Project Description
 
 ### Todo
 
-- [ ] timer  
-- [ ] sounds  
-- [ ] saving progression  
-- [ ] reload data from ls  
 
 ### In Progress
 
-- [ ] grid display  
-- [ ] grid interaction  
-- [ ] mine tracker  
 
 ### Done ✓
 
+- [x] timer  
+- [x] saving progression  
+- [x] grid interaction  
+- [x] mine tracker  
+- [x] grid display  
+- [x] reload data from ls  
+- [x] sounds  
+- [x] save time before closing  
 - [x] cookie (settings)  
 - [x] dark mode  
 - [x] sounds settings  

@@ -122,9 +122,9 @@ final-cb = (e, r) !->
 get-font = (cb) ->
   pth = "#{cfg.dir}/font.ls"
   if not cfg.fonts? # first time
-    require! { 'lucide-static': lucide }
     if cfg.watching then cfg.chok[pth.substring 2] = cfg.list[cfg.id].font
   try
+    require! { 'lucide-static': lucide }
     d = fse.readFileSync pth, \utf8
     f = (ls.compile d, { json: yes } |> JSON.parse).fonts
     clip = (h, s) ->

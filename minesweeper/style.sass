@@ -1,5 +1,3 @@
-$blocksize: 25px
-
 body
   --alt-a-col: #ddd
   --base-col: white
@@ -15,14 +13,12 @@ button
 h1
   text-align: center
 
-.flag
-  width: $blocksize
-  height: $blocksize
-  border: solid 1px black
-
 .menu
   margin: 4px auto
   text-align: center
+
+  & > div
+    display: inline-block 
 
 .settings
   margin: 5px auto
@@ -58,6 +54,10 @@ h1
         stroke: var(--inv-col)
         stroke-width: 2px
 
+      & .toggler
+        fill: #fff0
+        cursor: pointer
+
 #config
   margin: auto
   width: fit-content
@@ -67,7 +67,7 @@ h1
   & input
     width: 40px
     grid-column-start: 2
-  
+
   & div
     grid-column-start: 1
     grid-column-end: 3
@@ -77,8 +77,39 @@ h1
   & button
     font-size: 19px
 
+#load-save
+  display: none
+
+  & > div
+    max-width: 360px
+    margin: 5px auto
+    text-align: center
+    display: flex
+    justify-content: space-around
+
 #mines
   display: none
+
+#pause-veil
+  border: outset 3px var(--inv-col)
+  width: 200px
+  height: 50px
+  font-size: 24px
+  font-weight: bold
+  justify-content: center
+  align-items: center
+  margin: auto
+  display: none
+
+#state-fail, #state-success
+  font-weight: bold
+  padding: 0 4px
+
+#state-fail
+  color: red
+
+#state-success
+  color: lime
 
 #thegrid
   display: grid
@@ -86,10 +117,42 @@ h1
   gap: 2px
   width: fit-content
 
-  & > div
-    display: inline-grid
-    width: $blocksize
-    min-width: $blocksize
-    height: $blocksize
-    background: gray
-    cursor: pointer
+  & > button
+    width: 26px
+    height: 26px
+    background: var(--alt-a-col)
+
+    &.revealed
+      background: var(--base-col)
+
+    & svg
+      margin: 0
+      margin-left: -4px
+      padding: 0
+      height: 22px
+      width: 22px
+
+      & use
+        fill: none
+        stroke: var(--inv-col)
+        stroke-width: 2px
+        transform: scale(0.8)
+
+        &.badflag
+          stroke: red
+
+        &.explode
+          fill: yellow
+          stroke: orange
+        
+        &.goodflag
+          stroke: green
+
+#timer
+  & div
+    font: bold 18px monospace
+    display: inline-block
+    border: outset 1px var(--inv-col)
+    height: 23px
+    margin: auto 3px
+    padding: 1px 6px
