@@ -61,14 +61,14 @@ Menu =
 # LS #########################################
 
 LS =
-  check: ->
+  check: (key) ->
     try
-      localStorage.hasOwnProperty \ms-game
+      localStorage.hasOwnProperty "ms-#key"
     catch
       no
-  clean: !-> localStorage.removeItem \ms-game
-  get: -> localStorage.getItem \ms-game
-  save: (value) !-> localStorage.setItem 'ms-game', value
+  clean: (key) !-> localStorage.removeItem "ms-#key"
+  get: (key) -> localStorage.getItem "ms-#key"
+  save: (key, value) !-> localStorage.setItem "ms-#key", value
 
 # SETTINGS ###################################
 
@@ -134,7 +134,7 @@ App =
   cfg: {rows: 15, columns: 10, mines: 40, running: no, tofind: 0}
   # methods
   cancel: !->
-    LS.clean!
+    LS.clean \game
     @cfg.running = no
     q-sel \#load-save .style.display = \none
     q-sel \#config .style.display = \grid
@@ -144,34 +144,59 @@ App =
     if @cfg.running
       unless Timer.paused then Timer.pause!
       @save!
+  config: (show = no) ->
+    check = (acc, elt) ->
+      unless acc then acc
+      else
+        v = q-sel "\#form-#elt" .value
+        if isNaN v or v < 1
+          if show then alert "You entered a bad value for the #elt!"
+          no
+        else if v >= (if elt is \mines then 9999 else 100)
+          if show then alert "You entered a value too high for the #elt!"
+          no
+        else App.cfg[elt] = v;yes
+    r = <[rows columns mines]>.reduce check, yes
+    if r
+      cof = {rows: @cfg.rows, columns: @cfg.columns, mines: @cfg.mines}
+      LS.save \config, (JSON.stringify cof)
+    r
   flag: (x, y, evt) !->
     evt.preventDefault!
     key = "#{x}-#y"
     cell = q-sel "\#cell-#key"
-    if @cfg.f.hasOwnProperty "f-#key"
-      delete @cfg.f["f-#key"]
-      cell.innerHTML = ''
-      Audio.play \unflag
-    else
-      @cfg.f["f-#key"] = yes
-      cell.innerHTML = "<svg><use href='\#flag'/></svg>"
-      Audio.play \flag
-    #@cfg.h.push {t: \f, x, y} # -> no need, just have to get the list
-    Menu.update(@cfg.mines - Object.keys(@cfg.f).length)
-    @save!
+    if @cfg.running and not cell.classList.contains \revealed
+      if @cfg.f.hasOwnProperty "f-#key"
+        delete @cfg.f["f-#key"]
+        cell.innerHTML = ''
+        Audio.play \unflag
+      else
+        @cfg.f["f-#key"] = yes
+        cell.innerHTML = "<svg><use href='\#flag'/></svg>"
+        Audio.play \flag
+      #@cfg.h.push {t: \f, x, y} # -> no need, just have to get the list
+      Menu.update(@cfg.mines - Object.keys(@cfg.f).length)
+      @save!
   init: !->
     @cfg <<<< @cfgbase!
     Audio.init!
-    if LS.check!
+    if LS.check \config
+      try
+        for key, val of (JSON.parse (LS.get \config ))
+          @cfg[key] = val
+          q-sel "\#form-#key" .value = val
+      catch e
+        void
+    if LS.check \game
       try
         tmp = JSON.parse (LS.get \game)
-        if tmp.timer[tmp.timer.length - 1].length is 1 then LS.clean!
+        if tmp.timer[tmp.timer.length - 1].length is 1 then LS.clean \game
         else
           q-sel \#config .style.display = \none
           q-sel \#load-save .style.display = \block
           @cfg.tmp = tmp
       catch e
-        LS.clean!
+        LS.clean \game
     Cookie.check!
   load: !->
     may-add = (x, y) -> if App.cfg.b[x][y] is -1 then 1 else 0
@@ -219,17 +244,7 @@ App =
     Menu.pause!
     Timer.pause!
   play: !->
-    check = (acc, elt) ->
-      unless acc then acc
-      else
-        v = q-sel "\#form-#elt" .value
-        if isNaN v or v < 1
-          alert "You entered a bad balue for the #elt!";no
-        else if v >= (if elt is \mines then 9999 else 100)
-          alert "You entered a value too high for the #elt!";no
-        else
-          App.cfg[elt] = v;true
-    if [\rows, \columns, \mines ].reduce check, yes
+    if @config yes
       if @cfg.mines >= (@cfg.rows * @cfg.columns)
         alert "There's too many mines for the zone!"
       else
@@ -244,11 +259,12 @@ App =
             o += 1
         for x til @cfg.rows
           @cfg.b.push b.slice (x*@cfg.columns), ((x+1)*@cfg.columns)
+        @config!
         @load!
         Timer.run!
         @save!
   quit: !->
-    LS.clean!
+    LS.clean \game
     @cfg.running = no
     q-sel \#mines .style.display = \none
     q-sel \#config .style.display = \grid
@@ -285,7 +301,7 @@ App =
               elt = q-sel "\#cell-#{fx}-#fy"
               elt.innerHTML = "<svg><use class='#cls' href='\##href'/></svg>"
               elt.classList.add \revealed
-          LS.clean!
+          LS.clean \game
           Audio.play \explosion
           no
         | 0
@@ -327,8 +343,8 @@ App =
           Audio.play \success
   save: !->
     savr = (acc, elt) -> acc[elt] = App.cfg[elt]; acc
-    saver = <[ rows columns mines b f h timer ]>.reduce savr, {}
-    LS.save(JSON.stringify saver)
+    saver = <[rows columns mines b f h timer]>.reduce savr, {}
+    LS.save \game, (JSON.stringify saver)
   settings: (entry, mode) !-> Settings[entry] mode
 
 # OUTPUTS ####################################

@@ -15,7 +15,7 @@ export cfg =
       name: '54 cards deck'
       path: \54_deck
       src: code.default
-    * active: yes
+    * active: no
       name: 'the clock'
       path: \clock
       src: code.default

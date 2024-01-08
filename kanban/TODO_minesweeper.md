@@ -6,15 +6,16 @@ Project Description
 
 ### Todo
 
-- [ ] saving input config  
-- [ ] lock flags when game not running  
-- [ ] fix colors  
 
 ### In Progress
 
 
 ### Done ✓
 
+- [x] saving input config  
+- [x] fix flag on already revealed button  
+- [x] lock flags when game not running  
+- [x] fix colors  
 - [x] timer  
 - [x] saving progression  
 - [x] grid interaction  

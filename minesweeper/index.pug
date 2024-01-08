@@ -32,11 +32,14 @@ html
     h1 Minesweeper
     #config
       label(for='form-rows') number of rows:
-      input#form-rows(type='number', min=1, max=100, value=15)
+      input#form-rows(
+        onchange='App.config()', type='number', min=1, max=100, value=15)
       label(for='form-columns') number of columns:
-      input#form-columns(type='number', min=1, max=100, value=10)
+      input#form-columns(
+        onchange='App.config()', type='number', min=1, max=100, value=10)
       label(for='form-mines') number of mines:
-      input#form-mines(type='number', min=1, max=9999, value=40)
+      input#form-mines(
+        onchange='App.config()', type='number', min=1, max=9999, value=40)
       div: button(onclick='App.play()') Play!
     #load-save
       div.
