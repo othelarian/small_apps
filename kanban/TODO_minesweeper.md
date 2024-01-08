@@ -6,6 +6,9 @@ Project Description
 
 ### Todo
 
+- [ ] saving input config  
+- [ ] lock flags when game not running  
+- [ ] fix colors  
 
 ### In Progress
 

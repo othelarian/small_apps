@@ -15,9 +15,10 @@ export cfg =
       name: '54 cards deck'
       path: \54_deck
       src: code.default
-    #
-    # TODO: clock
-    #
+    * active: yes
+      name: 'the clock'
+      path: \clock
+      src: code.default
     * active: yes
       name: \final-diceroller
       path: \final-dr
