@@ -8,7 +8,8 @@ brew = ->
   out = {}
   out <<<< code.default
   out.brew = out.ls
-  out.brew[0].push [ \app.js ]
+  out.brew[0][1] = \bundle.js
+  out.brew[0].push [ \app.ls ]
   delete out.ls
   out
 

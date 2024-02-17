@@ -2,22 +2,11 @@
 
 require! {
   '../utils/basics': { c-elt, q-sel }
+  '../utils/cookies': { Cookie }
+  '../utils/local-storage': { LS }
 }
 
 # UTILS ######################################
-
-/*
-function c-elt tag, attrs, txt, html
-  elt = document.createElement tag
-  for k, v of attrs then elt.setAttribute k, v
-  if txt? then elt.innerText = txt
-  else if html? then elt.innerHTML = html
-  elt
-
-function q-sel s, a = no
-  if a then document.querySelectorAll s
-  else document.querySelector s
-*/
 
 function rand2 m then Math.floor (Math.random! * m)
 
@@ -30,17 +19,6 @@ Audio =
       Audio.audio[elt] = q-sel "\#aud-#elt"
       Audio.audio[elt].volume = 0.5
   play: (sound) !-> if Settings.currsound is 1 then Audio.audio[sound].play!
-
-# COOKIE #####################################
-
-Cookie =
-  check: !->
-    cookies = {}
-    for elt in (document.cookie.split '; ')
-      t = elt.split \=;cookies[t[0]] = t[1]
-    if \ms-theme of cookies then Settings.theme cookies['ms-theme']
-    if \ms-sound of cookies then Settings.sound cookies['ms-sound']
-  set: (key, mode) !-> document.cookie = "ms-#key=#mode"
 
 # GAME MENU ##################################
 
@@ -65,18 +43,6 @@ Menu =
     q-sel \#time-play .style.display = \none
     q-sel \#state-success .style.display = ''
   update: (nb) !-> q-sel \#left .innerText = nb
-
-# LS #########################################
-
-LS =
-  check: (key) ->
-    try
-      localStorage.hasOwnProperty "ms-#key"
-    catch
-      no
-  clean: (key) !-> localStorage.removeItem "ms-#key"
-  get: (key) -> localStorage.getItem "ms-#key"
-  save: (key, value) !-> localStorage.setItem "ms-#key", value
 
 # SETTINGS ###################################
 
@@ -195,6 +161,7 @@ App =
           q-sel "\#form-#key" .value = val
       catch e
         void
+    LS.init \ms
     if LS.check \game
       try
         tmp = JSON.parse (LS.get \game)
@@ -205,7 +172,10 @@ App =
           @cfg.tmp = tmp
       catch e
         LS.clean \game
-    Cookie.check!
+    Cookie.init \ms
+    cks = Cookie.check!
+    for key in <[ theme sound ]>
+      if cks.hasOwnProperty "ms-#key" then Settings[key] cks["ms-#key"]
   load: !->
     may-add = (x, y) -> if App.cfg.b[x][y] is -1 then 1 else 0
     thegrid = q-sel \#thegrid
