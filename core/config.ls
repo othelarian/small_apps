@@ -13,6 +13,12 @@ brew = ->
   delete out.ls
   out
 
+dr-src = ->
+  out = brew!
+  sets = <[ classic utils others ]>
+  for set in sets then out.brew[0][2].push "sets/#set.ls"
+  out
+
 export cfg =
   dest: ''
   dest_path: { debug: \dist, release: \out, github: \docs }
@@ -31,7 +37,7 @@ export cfg =
     * active: yes
       name: \final-diceroller
       path: \final-dr
-      src: code.default
+      src: dr-src!
       cmd: (cmd) !-> require! '../final-dr/cmds': module; module[cmd]!
       cmds:
         bookmark: 'generate the bookmark code'

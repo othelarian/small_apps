@@ -120,8 +120,8 @@ export get-font = (cb) ->
       s = s.split '\n'
       while s[s.length - 1] is '</svg>' or s[s.length - 1] is '' then s.pop()
       s = s.map (e) -> e.trim()
-      "<symbol id=\"#{h}\">" + (s.join '') + '</symbol>'
-    cfg.fonts = (f.map (elt) -> clip elt, lucide[elt]) .join ''
+      "<symbol id=\"#{h}\">" + (s * '') + '</symbol>'
+    cfg.fonts = (f.map (elt) -> clip elt, lucide[elt]) * ''
     cb void 18
   catch e
     cb e, void

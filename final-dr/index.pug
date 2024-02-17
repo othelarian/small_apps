@@ -28,15 +28,16 @@ html
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width,initial-scale=1')
     link(rel='stylesheet', href='style.css')
-    script(type='text/javascript', src='app.js')
+    script(type='text/javascript', src='bundle.js')
   body(onload='App.init()')
     svg(xmlns='http://www.w3.org/2000/svg', style='display:none')
     #diceroller.cols
       .core
         select#the-selector(onchange='App.select()')
           option(value='classic', selected) Classic set
-          option(value='other1') Recluse, Fate, Tinyd6, ZC set
-          option(value='other2') PbtA, D&amp;G set
+          option(value='other1') Recluse, Fate, Tinyd6, ZC sets
+          option(value='other2') PbtA, D&amp;G sets
+          option(value='other3') Cortex set
         #classic-set.set
           .dice
             each v in [2, 3, 4, 6, 8]
@@ -62,7 +63,7 @@ html
             each v in tinyd6
               +appbtn('tinyd6', v)
             span &nbsp;|&nbsp;
-            +svgtog(2, 'other.tinyad', 'other1-tinyad')
+            +svgtog(2, 'other.tinyd6.disadv', 'other1-tinyad')
             span &nbsp;Focus
           .zc
             span ZC:&nbsp;
@@ -92,6 +93,11 @@ html
             )(style='grid-column:7;grid-row:1')
             div(style='grid-column:6 / 8;grid-row:2')
               button(onclick="App.sets.other.roll('dag')") Roll
+        #other3-set.other.set
+          //
+          //
+          p this is the Cortex set
+          //
       .result
         .res-lab Result:
         #res-show
