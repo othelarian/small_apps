@@ -27,6 +27,7 @@
   "devDependencies": {
     "@othelarian/livefile": "^1.0.0",
     "bach": "^2.0.1",
+    "browserify": "^17.0.0",
     "chokidar": "^3.5.3",
     "express": "^4.18.2",
     "fs-extra": "^11.1.1",
@@ -36,6 +37,7 @@
     "pug": "^3.0.2",
     "readline-sync": "^1.4.10",
     "sass": "^1.62.1",
-    "terser": "^5.17.5"
+    "terser": "^5.17.5",
+    "through": "^2.3.8"
   }
 }

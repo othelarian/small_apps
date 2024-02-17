@@ -1,9 +1,20 @@
 require! {
-  pug, sass, terser
+  browserify, path, pug, sass, terser, through
   'fs-extra': fse
   livescript: ls
   'lucide-static': lucide
 }
+
+# INTERNALS ##################################
+
+brew-ls = (file) ->
+  if path.extname(file) is '.ls'
+    data = ''
+    end = !->
+      @queue(ls.compile data, {bare: yes, header: no})
+      @queue null
+    through ((buf) !-> data += buf), end
+  else through!
 
 build-end = (cb) !->
   console.log "building [ #{cfg.list[cfg.id].name} ] DONE"
@@ -18,6 +29,8 @@ build-start = (cb) !->
   cfg.src = prj.src
   cb void 21
 
+# EXPORTED ###################################
+
 export building = (pcfg) ->
   pack = [build-start, create-dir, compile-src, build-end]
   if pcfg.statiq? and pcfg.statiq
@@ -27,10 +40,12 @@ export building = (pcfg) ->
 
 export compile-src = (cb) !->
   in-lst = (lg, fc) !->
-    inf = "#{cfg.dir}/#{fc[0]}"
-    outf = "#{cfg.out}/#{fc[1]}"
-    do-exec inf, outf, lg
-    if cfg.watching then cfg.chok[inf.substring 2] = { lg, outf }
+    opts = {inf: "#{cfg.dir}/#{fc[0]}", outf: "#{cfg.out}/#{fc[1]}", lg}
+    do-exec opts
+    if cfg.watching
+      if lg is \brew then for k in fc[2]
+        cfg.chok["#{cfg.dir}/#k".substring 2] = opts
+      else cfg.chok[opts.inf.substring 2] = opts
   in-lg = (lg, lst) -> for fc in lst then in-lst lg, fc
   for lg, lst of cfg.src then in-lg lg, lst
   cb void 13
@@ -65,9 +80,17 @@ export create-dir = (cb) !->>
   catch e
     if e.code is 'EEXIST' then cb void 1 else cb e void
 
-export do-exec = (inf, outf, sel) !-->>
+export do-exec = ({inf, outf, lg}) !-->>
   try
-    r = switch sel
+    r = switch lg
+      | \brew
+        b = browserify inf, {extensions: [ \.ls ], transform: brew-ls}
+        hdl = (res, rej) !->
+          bcb = (err, buff) !-> if err isnt null then rej(err) else res(buff)
+          b.bundle bcb
+        r = await (new Promise hdl)
+        if cfg.release or cfg.github then (await terser.minify r.toString!).code
+        else r.toString!
       | \ls
         c = fse.readFileSync inf, \utf-8 |> ls.compile
         if cfg.release or cfg.github then (await terser.minify c).code
@@ -75,7 +98,7 @@ export do-exec = (inf, outf, sel) !-->>
       | \pug  => pug.renderFile inf, cfg
       | \sass => (sass.compile inf, { style: \compressed }).css
     fse.writeFileSync outf, r
-    console.log "#{new Date!toLocaleString!} => '#{sel}' compilation done"
+    console.log "#{new Date!toLocaleString!} => '#{lg}' compilation done"
   catch e
     console.log 'ERROR(doExec): Something went wrong!!\n\n'
     console.log e

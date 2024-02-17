@@ -1,4 +1,3 @@
-
 export clean = !->
   require! { 'fs-extra': { remove } }
   console.log "cleaning `#{cfg.dest}`..."

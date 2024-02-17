@@ -17,12 +17,13 @@ export watching = (cb) !->
     if pth[0] is \. then pth.slice 2
     if chkstatiq.test pth then builder.copy-statiq builder.final-cb
     else if /font/.test pth
-      builder.get-font builder.final-cb
-      for fle in cfg.chok[pth]
-        builder.do-exec fle, cfg.chok[fle].outf, cfg.chok[fle].lg
+      builder.get-font (e) !->
+        if e? then builder.final-cb e, void
+        else
+          for fle in cfg.chok[pth] then builder.do-exec cfg.chok[fle]
     else
       console.log "recompiling: '#pth'"
-      builder.do-exec pth, cfg.chok[pth].outf, cfg.chok[pth].lg
+      builder.do-exec cfg.chok[pth]
   watcher.on \error, (e) !->
     console.log 'CHOKIDAR ERROR:\n'
     console.log e

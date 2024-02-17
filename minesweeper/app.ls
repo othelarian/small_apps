@@ -1,5 +1,12 @@
+# REQUIRES ###################################
+
+require! {
+  '../utils/basics': { c-elt, q-sel }
+}
+
 # UTILS ######################################
 
+/*
 function c-elt tag, attrs, txt, html
   elt = document.createElement tag
   for k, v of attrs then elt.setAttribute k, v
@@ -10,6 +17,7 @@ function c-elt tag, attrs, txt, html
 function q-sel s, a = no
   if a then document.querySelectorAll s
   else document.querySelector s
+*/
 
 function rand2 m then Math.floor (Math.random! * m)
 

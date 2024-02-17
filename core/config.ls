@@ -4,6 +4,14 @@ code =
     pug: [[ \index.pug, \index.html ]]
     sass: [[ \style.sass, \style.css ]]
 
+brew = ->
+  out = {}
+  out <<<< code.default
+  out.brew = out.ls
+  out.brew[0].push [ \app.js ]
+  delete out.ls
+  out
+
 export cfg =
   dest: ''
   dest_path: { debug: \dist, release: \out, github: \docs }
@@ -16,7 +24,7 @@ export cfg =
       path: \54_deck
       src: code.default
     * active: no
-      name: 'the clock'
+      name: 'The Clock'
       path: \clock
       src: code.default
     * active: yes
@@ -29,18 +37,18 @@ export cfg =
     * active: yes
       name: \minesweeper
       path: \minesweeper
-      src: code.default
+      src: brew!
       statiq: yes
       font: [ \minesweeper/index.pug ]
-    #
-    # TODO: simon
-    #
+    * active: no
+      name: 'Simon\'s game'
+      path: \simon
+      src: code.default
     * active: no
       name: \wasm_test
       path: \wasm_test
       src: { pug: [[ \index.pug, \index.html ]] }
       wasm: yes
-    #
   out: ''
   root: { pug: [[\core/index.pug, \index.html ]] }
   src: void
