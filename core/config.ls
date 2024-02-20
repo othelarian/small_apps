@@ -15,7 +15,7 @@ brew = ->
 
 dr-src = ->
   out = brew!
-  sets = <[ classic utils others ]>
+  sets = <[ classic cortex utils others ]>
   for set in sets then out.brew[0][2].push "sets/#set.ls"
   out
 

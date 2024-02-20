@@ -88,9 +88,9 @@ export do-exec = ({inf, outf, lg}) !-->>
         hdl = (res, rej) !->
           bcb = (err, buff) !-> if err isnt null then rej(err) else res(buff)
           b.bundle bcb
-        r = await (new Promise hdl)
-        if cfg.release or cfg.github then (await terser.minify r.toString!).code
-        else r.toString!
+        r = (await (new Promise hdl)).toString!
+        if cfg.release or cfg.github then (await terser.minify r).code
+        else r
       | \ls
         c = fse.readFileSync inf, \utf-8 |> ls.compile
         if cfg.release or cfg.github then (await terser.minify c).code

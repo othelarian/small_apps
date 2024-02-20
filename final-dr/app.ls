@@ -2,6 +2,7 @@
 
 require! {
   '../utils/basics': { c-elt, q-sel }
+  './sets/cortex': { CortexSet }
   './sets/classic': { ClassicSet }
   './sets/others': { OtherSet }
 }
@@ -47,6 +48,7 @@ App =
       switch mode | -1 => 9 | 0 => 30 | 1 => 51
   # SETS
   sets:
+    cortex: new CortexSet
     classic: new ClassicSet
     other: new OtherSet
 

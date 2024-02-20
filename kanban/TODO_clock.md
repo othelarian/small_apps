@@ -6,15 +6,16 @@ Project Description
 
 ### Todo
 
-- [ ] first draw  
-- [ ] tick  
-- [ ] config veil  
+- [ ] full date & time picker  
 - [ ] json config  
 
 ### In Progress
 
 - [ ] size and resize  
+- [ ] tick  
+- [ ] first draw  
 
 ### Done ✓
 
+- [x] active config  
 

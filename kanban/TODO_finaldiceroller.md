@@ -6,11 +6,11 @@ Project Description
 
 ### Todo
 
-- [ ] Other 2 => C+  
 - [ ] Other => charge  
 
 ### In Progress
 
+- [ ] Other 2 => C+  
 
 ### Done ✓
 
