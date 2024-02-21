@@ -15,7 +15,7 @@ brew = ->
 
 dr-src = ->
   out = brew!
-  sets = <[ classic cortex utils others ]>
+  sets = <[classic cortex utils others]>
   for set in sets then out.brew[0][2].push "sets/#set.ls"
   out
 
@@ -30,6 +30,13 @@ export cfg =
       name: '54 cards deck'
       path: \54_deck
       src: code.default
+    * active: no
+      name: 'Crunchy Cortex'
+      path: 'crunchy'
+      src:
+        pug: [[\persos.pug, \persos.html ]]
+      views: yes
+      statiq: yes
     * active: no
       name: 'The Clock'
       path: \clock

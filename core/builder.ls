@@ -51,31 +51,47 @@ export compile-src = (cb) !->
   cb void 13
 
 export copy-statiq = (cb, prep = no) !->>
+  lstdir = (pdir) ->>
+    src-files = await fse.readdir "#{cfg.dir}/#pdir"
+    ret-files = []
+    src-mod = [...src-files]
+    rem-from-src = (tf) !-> src-mod.splice (src-mod.indexOf tf), 1
+    for outf in await fse.readdir "#{cfg.out}/#pdir"
+      pdoutf = "#pdir/#outf"
+      if outf is \.gitignore then rem-from-src outf
+      if outf not in src-files then fse.remove "#{cfg.out}/#pdoutf"
+      else
+        if fse.statSync "#{cfg.dir}/#pdoutf" .isDirectory!
+          hdl = (e, _) !-> if e? then throw e
+          await create-dir hdl, "./#{cfg.out}/#pdoutf"
+          ret-files = lstdir pdoutf
+          src-files.splice (src-files.indexOf outf), 1
+          rem-from-src outf
+        else
+          odt = (await fse.stat "#{cfg.out}/#pdoutf").mtimeMs
+          sdt = (await fse.stat "#{cfg.dir}/#pdoutf").mtimeMs
+          if sdt is odt then rem-from-src outf
+    for inf in src-mod
+      await fse.copy "#{cfg.dir}/#pdir/#inf", "#{cfg.out}/#pdir/#inf"
+    src-files ++ ret-files
   if await fse.pathExists "#{cfg.dir}/statiq"
     console.log 'copy statiq file'
     try
       await fse.mkdirs "#{cfg.out}/statiq"
-      src_files = await fse.readdir "#{cfg.dir}/statiq"
-      src_mod = [...src_files]
-      for outf in await fse.readdir "#{cfg.out}/statiq"
-        if outf not in src_files then fse.remove "#{cfg.out}/statiq/#outf"
-        else
-          odt = (await fse.stat "#{cfg.out}/statiq/#outf").mtimeMs
-          sdt = (await fse.stat "#{cfg.dir}/statiq/#outf").mtimeMs
-          if sdt is odt then src_mod.splice (src_mod.indexOf outf), 1
-      for inf in  src_mod
-        await fse.copy "#{cfg.dir}/statiq/#inf", "#{cfg.out}/statiq/#inf"
+      lst-files = await lstdir \statiq
       if cfg.watching
-        cfg.statiq = src_files
+        cfg.statiq = lst-files
         if prep then cfg.chok["#{cfg.dir}/statiq"] = { \statiq, '' }
       cb void 7
     catch e
+      console.log 'COPY-STATIQ ERROR:'
       cb e, void
   else cb 'ERROR: no statiq file to copy' void
 
-export create-dir = (cb) !->>
+export create-dir = (cb, pth = void) !->>
+  pth = if pth is void then "./#{cfg.out}" else pth
   try
-    await fse.mkdirs "./#{cfg.out}"
+    await fse.mkdirs pth
     cb void 0
   catch e
     if e.code is 'EEXIST' then cb void 1 else cb e void

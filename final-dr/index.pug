@@ -21,6 +21,8 @@ mixin svgtog(nb, fn, cid)
 - var recluse = [['d', 'DIS'],   ['n', 'RECLUSE'], ['a', 'ADV']];
 - var tinyd6 = [['d', 'Dis'], ['n', 'Tinyd6'], ['a', 'Adv']];
 
+- function cortexdice(){}
+
 doctype html
 html
   head(lang='en')
@@ -94,10 +96,19 @@ html
             div(style='grid-column:6 / 8;grid-row:2')
               button(onclick="App.sets.other.roll('dag')") Roll
         #other3-set.other.set
-          //
-          //
-          p this is the Cortex set
-          //
+          #cortex
+            //
+            p this is the Cortex set
+            svg(width=290, height=90)
+              each v in [4, 6, 8, 10, 12]
+                path(
+                  transform='translate(40,40)',
+                  path='',
+                  fill='green',
+                  onclick='App.sets.cortex.dice(4)'
+                )
+            //
+            //
       .result
         .res-lab Result:
         #res-show
