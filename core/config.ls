@@ -1,4 +1,5 @@
 code =
+  brew: [[ \app.ls, \bundle.js, [ \app.ls ]]]
   default:
     ls: [[ \app.ls, \app.js ]]
     pug: [[ \index.pug, \index.html ]]
@@ -7,10 +8,8 @@ code =
 brew = ->
   out = {}
   out <<<< code.default
-  out.brew = out.ls
-  out.brew[0][1] = \bundle.js
-  out.brew[0].push [ \app.ls ]
   delete out.ls
+  out.brew = code.brew
   out
 
 dr-src = ->
@@ -35,8 +34,10 @@ export cfg =
       path: 'crunchy'
       src:
         pug: [[\persos.pug, \persos.html ]]
-      views: yes
+        sass: [[\styles/fiche.sass, \styles/fiche.css ]]
+      server: yes
       statiq: yes
+      views: yes
     * active: no
       name: 'The Clock'
       path: \clock
@@ -65,7 +66,9 @@ export cfg =
       wasm: yes
   out: ''
   root: { pug: [[\core/index.pug, \index.html ]] }
+  server: {}
   src: void
   statiq: []
+  views: []
   watching: no
   chok: {}

@@ -42,7 +42,6 @@ pugSrc = (name) ->
       script(type='text/javascript', src='app.js')
     body(onload='App.init()')
       //
-      // TODO
       //
   """
 

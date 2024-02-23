@@ -13,6 +13,7 @@ Project Description
 
 ### Done ✓
 
+- [x] adding views to copy  
 - [x] terser for release  
 - [x] lucide font  
 - [x] chokidar -> font config  

@@ -16,6 +16,46 @@ brew-ls = (file) ->
     through ((buf) !-> data += buf), end
   else through!
 
+copy-dir = (cb, target, prep = no) !->>
+  lstdir = (sdir, odir) ->>
+    src-files = await fse.readdir sdir
+    ret-files = []
+    src-mod = [...src-files]
+    rem-from-src = (tf) !-> src-mod.splice (src-mod.indexOf tf), 1
+    for outf in await fse.readdir odir
+      if outf is \.gitignore then rem-from-src outf
+      if outf not in src-files then fse.remove "#odir/#outf"
+      else
+        if fse.statSync "#sdir/#outf" .isDirectory!
+          hdl = (e, _) !-> if e? then throw e
+          await create-dir hdl, "./#odir/#outf"
+          ret-files = await lstdir "#sdir/#outf", "#odir/#outf"
+          src-files.splice (src-files.indexOf outf), 1
+          rem-from-src outf
+        else
+          odt = (await fse.stat "#odir/#outf").mtimeMs
+          sdt = (await fse.stat "#sdir/#outf").mtimeMs
+          if sdt is odt then rem-from-src outf
+    for inf in src-mod
+      await fse.copy "#sdir/#inf", "#odir/#inf"
+    src-files.map ("#sdir/" ++) |> (++ ret-files)
+  if await fse.pathExists "#{cfg.dir}/#target"
+    console.log 'copy statiq file'
+    try
+      odir = switch target
+        | \statiq => "#{cfg.out}/#target"
+        | \views  => "#{cfg.dest}/#target/#{cfg.dir.substring 2}"
+      await fse.mkdirs odir
+      lst-files = await lstdir "#{cfg.dir}/#target", odir
+      if cfg.watching
+        cfg[target] = lst-files
+        if prep then cfg.chok["#{cfg.dir}/#target"] = { target }
+      cb void 7
+    catch e
+      console.log "COPY-#{target.toUpperCase!} ERROR:"
+      cb e, void
+  else cb "ERROR: no #target dir to copy from", void
+
 build-end = (cb) !->
   console.log "building [ #{cfg.list[cfg.id].name} ] DONE"
   if not cfg.watching then cfg.id += 1
@@ -36,6 +76,8 @@ export building = (pcfg) ->
   if pcfg.statiq? and pcfg.statiq
     pack.splice 2 0 ((cb) !-> copy-statiq cb, yes)
   if pcfg.font? then pack.splice (pack.length - 2), 0, get-font
+  if pcfg.views? and pcfg.views
+    pack.splice 2 0 ((cb) !-> copy-views cb, pcfg.path, yes)
   pack
 
 export compile-src = (cb) !->
@@ -50,43 +92,9 @@ export compile-src = (cb) !->
   for lg, lst of cfg.src then in-lg lg, lst
   cb void 13
 
-export copy-statiq = (cb, prep = no) !->>
-  lstdir = (pdir) ->>
-    src-files = await fse.readdir "#{cfg.dir}/#pdir"
-    ret-files = []
-    src-mod = [...src-files]
-    rem-from-src = (tf) !-> src-mod.splice (src-mod.indexOf tf), 1
-    for outf in await fse.readdir "#{cfg.out}/#pdir"
-      pdoutf = "#pdir/#outf"
-      if outf is \.gitignore then rem-from-src outf
-      if outf not in src-files then fse.remove "#{cfg.out}/#pdoutf"
-      else
-        if fse.statSync "#{cfg.dir}/#pdoutf" .isDirectory!
-          hdl = (e, _) !-> if e? then throw e
-          await create-dir hdl, "./#{cfg.out}/#pdoutf"
-          ret-files = lstdir pdoutf
-          src-files.splice (src-files.indexOf outf), 1
-          rem-from-src outf
-        else
-          odt = (await fse.stat "#{cfg.out}/#pdoutf").mtimeMs
-          sdt = (await fse.stat "#{cfg.dir}/#pdoutf").mtimeMs
-          if sdt is odt then rem-from-src outf
-    for inf in src-mod
-      await fse.copy "#{cfg.dir}/#pdir/#inf", "#{cfg.out}/#pdir/#inf"
-    src-files ++ ret-files
-  if await fse.pathExists "#{cfg.dir}/statiq"
-    console.log 'copy statiq file'
-    try
-      await fse.mkdirs "#{cfg.out}/statiq"
-      lst-files = await lstdir \statiq
-      if cfg.watching
-        cfg.statiq = lst-files
-        if prep then cfg.chok["#{cfg.dir}/statiq"] = { \statiq, '' }
-      cb void 7
-    catch e
-      console.log 'COPY-STATIQ ERROR:'
-      cb e, void
-  else cb 'ERROR: no statiq file to copy' void
+export copy-statiq = (cb, prep = no) !-> copy-dir cb, \statiq, prep
+
+export copy-views = (cb, prep = no) !-> copy-dir cb, \views, prep
 
 export create-dir = (cb, pth = void) !->>
   pth = if pth is void then "./#{cfg.out}" else pth
@@ -113,6 +121,8 @@ export do-exec = ({inf, outf, lg}) !-->>
         else c
       | \pug  => pug.renderFile inf, cfg
       | \sass => (sass.compile inf, { style: \compressed }).css
+    drn = path.dirname outf
+    if drn isnt \. then await fse.mkdirs drn
     fse.writeFileSync outf, r
     console.log "#{new Date!toLocaleString!} => '#{lg}' compilation done"
   catch e
@@ -144,7 +154,7 @@ export get-font = (cb) ->
 
 export wasm-pack = (cb) !->
   #
-  # TODO
+  # TODO: wasm
   #
   require! {
     buffer, path

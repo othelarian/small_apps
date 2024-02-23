@@ -1,12 +1,5 @@
 # REQUIRES ############################
 
-require! {
-  bach
-  'fs-extra': fse
-  './core/builder': builder
-  './core/tasker': tasker
-}
-
 # OPTIONS #############################
 
 option \cmd,     \c, \String,  'command to use (with the `cmd` task)'
@@ -22,32 +15,20 @@ global.cfg = {}
 
 # FUNCTIONS ###########################
 
-build-all = !->
-  end-all = (cb) !->
-    cfg.id = 0
-    cb void 5
-  start-all = (cb) !->
-    cfg.dir = '.'
-    cfg.out = "./#{cfg.dest}"
-    cfg.src = cfg.root
-    cb void 4
-  cfg.list = cfg.list.filter (.active), cfg.list
-  args =
-    [builder.building pcfg for pcfg in cfg.list].flat!
-    |> ([start-all, builder.create-dir, builder.compile-src, end-all] ++)
-  (bach.series args) builder.final-cb
-
-check-env = (opts) !->
-  require! { './core/config': config }
+execute = (opts, tsk) !->
+  require! { './core/config', './core/tasker' }
   cfg <<<< config.cfg
   [cfg.dest, cfg.release, cfg.github] = switch
     | opts.github  => [cfg.dest_path.github,  yes, yes]
-    | opts.release => [cfg.dest_path.release, yes, no]
-    | _            => [cfg.dest_path.debug,   no,  no]
+    | opts.release => [cfg.dest_path.release, yes, no ]
+    | _            => [cfg.dest_path.debug,   no,  no ]
+  tasker[tsk] opts
 
 # TEST ################################
 
 task \wasm, '', !->
+  #
+  require! './core/builder'
   #
   builder.wasm-pack builder.final-cb
   #
@@ -55,37 +36,22 @@ task \wasm, '', !->
 # TASKS ###############################
 
 task \all, 'compile all active projects', (opts) !->
-  check-env opts
-  build-all!
+  execute opts, \all
 
 task \clean, 'remove `dist`', (opts) !->
-  check-env opts
-  tasker.clean!
+  execute opts, \clean
 
 task \cmd, 'execute a command in a project', (opts) !->
-  opts.github = no
-  opts.release = no
-  check-env opts
-  tasker.command!
+  execute ({} <<< opts <<< {github: no, release: no}), \cmd
 
 task \compile, 'compile one project (USE PROJECT ID!)', (opts) !->
-  opts.github = no
-  opts.release = no
-  check-env opts
-  tasker.compile opts
+  execute ({} <<< opts <<< {github: no, release: no}), \compile
 
 task \create, 'create a new project', (opts) !->
-  check-env opts
-  tasker.create!
+  execute opts, \create
 
 task \list, 'list all projects actually available', (_) !->
-  check-env {}
-  tasker.list!
+  execute {}, \list
 
 task \serve, 'launch the server to get access to the projects', (opts) !->
-  opts.github = no
-  opts.release = no
-  check-env opts
-  #build-all!
-  require! { './core/server': { serve } }
-  serve!
+  execute ({} <<< opts <<< {github: no, release: no}), \serve

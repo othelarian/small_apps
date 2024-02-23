@@ -1,3 +1,23 @@
+# INTERNALS ##################################
+
+# EXPORTED ###################################
+
+export all = !->
+  require! { bach, './builder' }
+  end-all = (cb) !->
+    cfg.id = 0
+    cb void 5
+  start-all = (cb) !->
+    cfg.dir = '.'
+    cfg.out = "./#{cfg.dest}"
+    cfg.src = cfg.root
+    cb void 4
+  cfg.list = cfg.list.filter (.active), cfg.list
+  args =
+    [builder.building pcfg for pcfg in cfg.list].flat!
+    |> ([start-all, builder.create-dir, builder.compile-src, end-all] ++)
+  (bach.series args) builder.final-cb
+
 export clean = !->
   require! { 'fs-extra': { remove } }
   console.log "cleaning `#{cfg.dest}`..."
@@ -20,7 +40,7 @@ export command = !->
     console.log 'please use the --cmd or -c command option'
   else if opts.cmd not of cfg.list[opts.id].cmds
     console.log 'please select a command that exists in the list!'
-    console.log '(use \'cmd -p PROJECT_ID --l\' to get the list of the commands)'
+    console.log '(use `cmd -p PROJECT_ID --l` to get the list of the commands)'
   else cfg.list[opts.id].cmd opts.cmd
 
 export compile = (opts) !->
@@ -79,3 +99,8 @@ export create = !->
 export list = !->
   console.log 'Projects list:'
   for prj, i in cfg.list then console.log "#i => #{prj.name}"
+
+export serve = !->
+  require! './server': { serve }
+  cfg.id = -1
+  serve!
