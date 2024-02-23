@@ -24,7 +24,7 @@ copy-dir = (cb, target, prep = no) !->>
     rem-from-src = (tf) !-> src-mod.splice (src-mod.indexOf tf), 1
     for outf in await fse.readdir odir
       if outf is \.gitignore then rem-from-src outf
-      if outf not in src-files then fse.remove "#odir/#outf"
+      else if outf not in src-files then fse.remove "#odir/#outf"
       else
         if fse.statSync "#sdir/#outf" .isDirectory!
           hdl = (e, _) !-> if e? then throw e
