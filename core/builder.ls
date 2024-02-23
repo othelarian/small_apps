@@ -40,7 +40,6 @@ copy-dir = (cb, target, prep = no) !->>
       await fse.copy "#sdir/#inf", "#odir/#inf"
     src-files.map ("#sdir/" ++) |> (++ ret-files)
   if await fse.pathExists "#{cfg.dir}/#target"
-    console.log 'copy statiq file'
     try
       odir = switch target
         | \statiq => "#{cfg.out}/#target"
@@ -124,7 +123,7 @@ export do-exec = ({inf, outf, lg}) !-->>
     drn = path.dirname outf
     if drn isnt \. then await fse.mkdirs drn
     fse.writeFileSync outf, r
-    console.log "#{new Date!toLocaleString!} => '#{lg}' compilation done"
+    console.log "#{new Date!toLocaleString!} => '#lg / #inf'  compilation done"
   catch e
     console.log 'ERROR(doExec): Something went wrong!!\n\n'
     console.log e

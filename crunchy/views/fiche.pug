@@ -1,7 +1,69 @@
+-
+  var attrs = ['muscle', 'brains', 'grit'];
+  var profis = {
+    "athletics":  ["stunt",    "sneak",     "endure" ],
+    "attitude":   ["appeal",   "convince",  "hearten"],
+    "background": ["security", "education", "contact"],
+    "combat":     ["fight",    "shoot",     "cool"   ],
+    "perception": ["spot",     "evaluate",  "scout"  ],
+    "survival":   ["scavenge", "tinker",    "heal"   ]
+  };
+  var gearskey = {"hands": "En main", "ready": "Prêt", "backpack": "Rangé"};
 doctype html
 html
   head
-  body
-    //
-    // TODO
-    //
+    title CC Fiche : #{name}
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width,initial-scale=1')
+    link(rel='stylesheet', href='/crunchy/styles/fiche.css')
+    script(type='text/javascript', src='/crunchy/scripts/fiche.js')
+    script#colors(type='application/json')!= JSON.stringify(colors)
+  body(onload='App.init()')
+    .fiche
+      .nom
+        h1= name
+        svg
+          circle(cx=10,cy=12,r=7)
+          line(x1=10,y1=12,x2=500,y2=10)
+      .col
+        if description
+          .desc= description
+        .distinctions
+          h2 Distinctions
+          each d in distinctions
+            .entree= d
+        h2 Stats
+        table.matrix
+          tr
+            td.nobr
+            each a in attrs
+              td.attr
+                span.dice= attributes[a]
+                span= a
+          each p in Object.keys(profis)
+            tr
+              td.profic
+                span= p
+                span.dice= proficiencies[p]
+              each a in profis[p]
+                td(class=(specialities.includes(a)? 'bold':''))= a
+      .col
+        h2 Equipement
+        each k in Object.keys(gearskey)
+          h3= gearskey[k]
+          if gears[k].length == 0
+            .nog Aucun équipement "#{gearskey[k]}"
+          else
+            .gears
+              each elt in gears[k]
+                .gear
+                  .name= elt.name
+                  .derive (#{elt.derive})
+                  .desc= elt.desc
+    if evolution
+      .fiche
+        //
+        // TODO
+        //
+        p partie à faire
+        //

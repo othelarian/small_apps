@@ -32,10 +32,13 @@ export cfg =
     * active: no
       name: 'Crunchy Cortex'
       path: 'crunchy'
-      src:
-        pug: [[\persos.pug, \persos.html ]]
-        sass: [[\styles/fiche.sass, \styles/fiche.css ]]
       server: yes
+      src:
+        ls:
+          [\scripts/fiche.ls, \scripts/fiche.js ]
+          [\scripts/persos.ls, \scripts/persos.js ]
+        pug: [[\index.pug, \index.html ]]
+        sass: [[\styles/fiche.sass, \styles/fiche.css ]]
       statiq: yes
       views: yes
     * active: no

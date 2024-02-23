@@ -1,0 +1,17 @@
+doctype html
+html
+  head
+    title CC - Les persos
+    script(type='text/javascript', src='/crunchy/scripts/persos.js')
+    style.
+      body {text-align:center;}
+      iframe {width:216mm;height:calc(100vh - 100px);}
+  body(onload='App.select()')
+    select#selector(onchange='App.select()')
+      each f in fiches
+        - var d = f.split('.')[0]
+        option(value=d)= d
+    p
+      span La fiche :&nbsp;
+      a#link(target='blank')
+    iframe#frame

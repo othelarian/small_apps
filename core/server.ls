@@ -13,7 +13,7 @@ export serve = (cb) !->
     if cfg.id is -1 then cfg.list else [cfg.list[cfg.id]]
     |> (.filter (.server))
   if serv-lst.length isnt 0
-    app.set \views, "#{cfg.out}/views"
+    app.set \views, "#{cfg.dest}/views"
     app.set 'view engine' \pug
     console.log 'loading server configs...'
     for config in serv-lst then servers[config.path] app

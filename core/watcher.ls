@@ -17,10 +17,11 @@ export watching = (cb) !->
       builder.copy-views builder.final-cb
   watcher.on \change, (pth) !->
     pth = pth.replaceAll '\\', '/'
-    choklog \change, pth
     if pth[0] is \. then pth.slice 2
-    if chkstatiq.test pth then builder.copy-statiq builder.final-cb
-    else if chkviews.test pth then builder.copy-views builder.final-cb
+    if chkstatiq.test pth
+      choklog \change, pth; builder.copy-statiq builder.final-cb
+    else if chkviews.test pth
+      choklog \change, pth; builder.copy-views builder.final-cb
     else if /font/.test pth
       builder.get-font (e) !->
         if e? then builder.final-cb e, void
