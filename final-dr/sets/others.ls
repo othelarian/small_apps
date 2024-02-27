@@ -80,20 +80,22 @@ function recluse mode
     itr = arr[id]
     arr[id] = "<b>#{arr[id]}</b>"
     [arr, itr]
+  showdice = (p) ->
+    use = "<use href='\#d6'/>"
+    add = if p then "<g transform='translate(24,0)'>#use</g>" else ''
+    atr = if p then ' style="width:40px"' else ''
+    "<svg#atr viewBox='0 0 #{if p then 48 else 24} 24'>#use#add</svg>"
   gr = [App.rand2 6]; br = [App.rand2 6]
   g = gr[0]; b = br[0]
-  tm = switch mode
-    | \a => [gr, g] = to-bold gr; ' (adv)'
-    | \d => [br, b] = to-bold br; ' (dis)'
-    | \n => ''
+  tm = (showdice (mode is \a)) ++ ' vs ' ++ (showdice (mode is \d))
   tt = switch
     | g is b => 'EQUAL! (and ' ++ (if g < 4 then 'BAD)' else 'GOOD)')
     | g < b => 'NO'
     | g > b => 'YES'
   if g isnt b
-    if g > 3 and b > 3 then tt = tt ++ ' and'
+    if g >= 3 and b >= 3 then tt = tt ++ ' and'
     else if g < 3 and b < 3 then tt = tt ++ ' but'
-  "Recluse#tm: [#{gr * ', '}] vs. [#{br * ', '}] => #tt"
+  "Recluse #tm: [#{gr * ', '}] vs. [#{br * ', '}] => #tt"
 
 # TINYD6 #####################################
 
