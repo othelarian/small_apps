@@ -66,6 +66,7 @@ build-start = (cb) !->
   cfg.dir = "./#{prj.path}"
   cfg.out = "./#{cfg.dest}/#{prj.path}"
   cfg.src = prj.src
+  if prj.version? then cfg.version = prj.version
   cb void 21
 
 # EXPORTED ###################################

@@ -52,6 +52,16 @@ export cfg =
       statiq: yes
       views: yes
     * active: no
+      name: 'Cereal Killers'
+      path: 'CS'
+      mono: yes
+      server: yes
+      #
+      # TODO: finalizing the config for CS
+      #
+      src: []
+      #
+    * active: no
       name: 'The Clock'
       path: \clock
       src: code.default
@@ -62,6 +72,7 @@ export cfg =
       cmd: (cmd) !-> require! '../final-dr/cmds': module; module[cmd]!
       cmds:
         bookmark: 'generate the bookmark code'
+      version: 1.6
     * active: yes
       name: \minesweeper
       path: \minesweeper
@@ -82,6 +93,7 @@ export cfg =
   server: {}
   src: void
   statiq: []
+  version: 0
   views: []
   watching: no
   chok: {}
