@@ -15,7 +15,7 @@ export class ClassicSet
         |> (++ "<use href='\#d10'/></g></svg>")
       else "d#v"
     if v is \s
-      v = q-sel \#classic-special .value |> parseInt
+      v = document.querySelector \#classic-special .value |> parseInt
       if isNaN v then alert 'Please enter a number'; return
       else if v < 1
         alert 'Please select a positive value AND ABOVE 2'; return
