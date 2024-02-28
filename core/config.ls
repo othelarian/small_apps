@@ -18,6 +18,20 @@ dr-src = ->
   for set in sets then out.brew[0][2].push "sets/#set.ls"
   out
 
+crunchy-src =
+  brew: [
+    [\scripts/main.ls, \scripts/main.js,
+      [\scripts/main.ls, \scripts/dr.ls ]
+    ]
+  ]
+  ls:
+    [\scripts/fiche.ls, \scripts/fiche.js ]
+    [\scripts/persos.ls, \scripts/persos.js ]
+  pug: [[\index.pug, \index.html ]]
+  sass:
+    [\styles/fiche.sass, \styles/fiche.css ]
+    [\styles/main.sass, \styles/main.css ]
+
 export cfg =
   dest: ''
   dest_path: { debug: \dist, release: \out, github: \docs }
@@ -32,13 +46,9 @@ export cfg =
     * active: no
       name: 'Crunchy Cortex'
       path: 'crunchy'
+      font: [\crunchy/index.pug ]
       server: yes
-      src:
-        ls:
-          [\scripts/fiche.ls, \scripts/fiche.js ]
-          [\scripts/persos.ls, \scripts/persos.js ]
-        pug: [[\index.pug, \index.html ]]
-        sass: [[\styles/fiche.sass, \styles/fiche.css ]]
+      src: crunchy-src
       statiq: yes
       views: yes
     * active: no

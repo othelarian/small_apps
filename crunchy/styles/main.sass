@@ -1,0 +1,98 @@
+@font-face
+  font-family: 'cortex-icons'
+  src: url('/crunchy/statiq/cortex-icons.woff') format('woff')
+
+:root
+  font-size: 12px
+
+h2
+  text-align: center
+
+.block
+  display: none
+  max-width: 600px
+  margin: auto
+
+.center
+  text-align: center
+
+.dice
+  fill: black
+  stroke: none
+
+.font
+  width: 20px
+  height: 20px
+  fill: none
+  stroke: black
+  stroke-width: 2px
+  stroke-linecap: round
+
+#dr-block
+  display: none
+  border: solid 2px black
+  position: absolute
+  top: 40px
+  left: 0
+  width: 200px
+
+  .dice-line
+    display: flex
+    gap: 4px
+    flex-wrap: wrap
+    justify-content: center
+
+    button
+      //font-family: 'cortex-icons'
+      width: 36px
+
+    .dice
+      width: 20px
+      height: 20px
+
+#dr-btn
+  width: 32px
+  border: solid 2px black
+  position: absolute
+  top: 40px
+  left: 0
+  text-align: center
+
+  button
+    width: 32px
+    font-size: 13px
+    background: white
+    border: none
+
+#dr-history
+  display: flex
+  flex-direction: column
+  gap: 3px
+
+  div
+    border: solid 1px gray
+    border-radius: 5px
+    display: flex
+    flex-wrap: wrap
+    gap: 4px
+    justify-content: center
+
+  .dice
+    width: 33px
+    height: 33px
+
+    text
+      text-anchor: middle
+      font-size: 11px
+      font-weight: bold
+
+#svg-core
+  width: 0
+  height: 0
+  position: absolute
+
+#welcome
+  text-align: center
+
+  select
+    margin: 10px auto

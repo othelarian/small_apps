@@ -1,0 +1,3 @@
+fonts:
+  \dices
+  \flag
