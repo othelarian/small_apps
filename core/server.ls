@@ -4,6 +4,7 @@ require! express
 
 servers =
   crunchy: (app) !-> require! '../crunchy/server': { setup }; setup app
+  'CS': (app) !-> require! '../CS/server': { setup }; setup app
 
 # SERVER #####################################
 

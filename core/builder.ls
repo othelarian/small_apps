@@ -67,6 +67,7 @@ build-start = (cb) !->
   cfg.out = "./#{cfg.dest}/#{prj.path}"
   cfg.src = prj.src
   if prj.version? then cfg.version = prj.version
+  cfg.mono = if prj.mono? then {} else void
   cb void 21
 
 # EXPORTED ###################################
@@ -78,12 +79,37 @@ export building = (pcfg) ->
   if pcfg.font? then pack.splice (pack.length - 2), 0, get-font
   if pcfg.views? and pcfg.views
     pack.splice 2 0 ((cb) !-> copy-views cb, pcfg.path, yes)
+  if pcfg.mono? then pack.splice (pack.length - 2), 1, compile-mono
   pack
+
+export compile-mono = (cb) !->
+  require! bach
+  args = []
+  carlin = void
+  for lg, lst of cfg.src then for entry in lst
+    outf = if lg is \carlin then \carlin else entry[1]
+    opts = {inf: "#{cfg.dir}/#{entry[0]}", outf, lg}
+    if lg is \carlin then opts.opts = {name: entry[3]}
+    args.push (do-exec opts)
+    if cfg.watching
+      #
+      # TODO: handle brew
+      #
+      cfg.chok[opts.inf.substring 2] = opts
+      #
+  carlopts =
+    inf: "#{cfg.dir}/#{cfg.src['carlin'][0][0]}"
+    outf: "#{cfg.out}/#{cfg.src['carlin'][0][1]}"
+    lg: \pug
+  args.push (do-exec carlopts)
+  if cfg.watching then for k in cfg.src['carlin'][0][2]
+    cfg.chok.mono = carlopts
+  (bach.series args) cb
 
 export compile-src = (cb) !->
   in-lst = (lg, fc) !->
     opts = {inf: "#{cfg.dir}/#{fc[0]}", outf: "#{cfg.out}/#{fc[1]}", lg}
-    do-exec opts
+    do-exec opts, void
     if cfg.watching
       if lg is \brew then for k in fc[2]
         cfg.chok["#{cfg.dir}/#k".substring 2] = opts
@@ -104,7 +130,7 @@ export create-dir = (cb, pth = void) !->>
   catch e
     if e.code is 'EEXIST' then cb void 1 else cb e void
 
-export do-exec = ({inf, outf, lg}) !-->>
+export do-exec = ({inf, outf, lg, opts}, cb) !-->>
   try
     r = switch lg
       | \brew
@@ -115,19 +141,29 @@ export do-exec = ({inf, outf, lg}) !-->>
         r = (await (new Promise hdl)).toString!
         if cfg.release or cfg.github then (await terser.minify r).code
         else r
+      | \carlin
+        c = pug.compileFileClient inf, {compileDebug: no, name: opts.name}
+        (await terser.minify c).code
       | \ls
         c = fse.readFileSync inf, \utf-8 |> ls.compile
         if cfg.release or cfg.github then (await terser.minify c).code
         else c
-      | \pug  => pug.renderFile inf, cfg
+      | \pug
+        if cfg.mono? then pug.compileFile inf
+        else pug.renderFile inf, cfg
       | \sass => (sass.compile inf, { style: \compressed }).css
-    drn = path.dirname outf
-    if drn isnt \. then await fse.mkdirs drn
-    fse.writeFileSync outf, r
+    if cfg.mono?
+      if lg isnt \pug then cfg.mono[outf] = r
+      else fse.writeFileSync outf, (r cfg)
+      if cb? then cb void 24
+    else
+      drn = path.dirname outf
+      if drn isnt \. then await fse.mkdirs drn
+      fse.writeFileSync outf, r
     console.log "#{new Date!toLocaleString!} => '#lg / #inf'  compilation done"
   catch e
     console.log 'ERROR(doExec): Something went wrong!!\n\n'
-    console.log e
+    if cfg.mono? and cb? then cb e, void else console.log e
 
 export final-cb = (e, r) !->
   if e?

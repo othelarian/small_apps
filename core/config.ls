@@ -32,6 +32,11 @@ crunchy-src =
     [\styles/fiche.sass, \styles/fiche.css ]
     [\styles/main.sass, \styles/main.css ]
 
+cs-src =
+  carlin: [[\index.pug, \index.html, [\index.pug ], \CSHtml ]]
+  ls: [[\scripts/app.ls, \app ]]
+  sass: [[\style.sass, \style ]]
+
 export cfg =
   dest: ''
   dest_path: { debug: \dist, release: \out, github: \docs }
@@ -54,13 +59,10 @@ export cfg =
     * active: no
       name: 'Cereal Killers'
       path: 'CS'
+      font: [\CS/index.pug ]
       mono: yes
       server: yes
-      #
-      # TODO: finalizing the config for CS
-      #
-      src: []
-      #
+      src: cs-src
     * active: no
       name: 'The Clock'
       path: \clock
@@ -90,10 +92,12 @@ export cfg =
       wasm: yes
   out: ''
   root: { pug: [[\core/index.pug, \index.html ]] }
+  # functional part
+  chok: {}
+  mono: void
   server: {}
   src: void
   statiq: []
   version: 0
   views: []
   watching: no
-  chok: {}

@@ -1,4 +1,4 @@
-require! { chokidar, path, './builder': builder }
+require! { bach, chokidar, path, './builder' }
 
 export watching = (cb) !->
   chkstatiq = /statiq/
@@ -23,13 +23,18 @@ export watching = (cb) !->
     else if chkviews.test pth
       choklog \change, pth; builder.copy-views builder.final-cb
     else if /font/.test pth
-      builder.get-font (e) !->
-        if e? then builder.final-cb e, void
-        else
-          for fle in cfg.chok[pth] then builder.do-exec cfg.chok[fle]
+      nxt =
+        if cfg.mono? then [builder.do-exec cfg.chok.mono]
+        else [(builder.do-exec cfg.chok[fle]) for fle in cfg.chok[pth]]
+      (bach.series ([builder.get-font] ++ nxt)) builder.final-cb
     else
       console.log "recompiling: '#pth'"
-      builder.do-exec cfg.chok[pth]
+      if cfg.mono?
+        args =
+          (do-exec cfg.chok[pth])
+          (do-exec cfg.chok.mono)
+        (bach.series args) builder.final-cb
+      else builder.do-exec cfg.chok[pth], void
   watcher.on \error, (e) !->
     console.log 'CHOKIDAR ERROR:\n'
     console.log e
