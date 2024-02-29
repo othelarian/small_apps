@@ -33,8 +33,8 @@ crunchy-src =
     [\styles/main.sass, \styles/main.css ]
 
 cs-src =
+  brew: [[\scripts/app.ls, \app , [\scripts/app.ls ]]]
   carlin: [[\index.pug, \index.html, [\index.pug ], \CSHtml ]]
-  ls: [[\scripts/app.ls, \app ]]
   sass: [[\style.sass, \style ]]
 
 export cfg =
@@ -42,7 +42,6 @@ export cfg =
   dest_path: { debug: \dist, release: \out, github: \docs }
   dir: ''
   id: 0
-  fonts: void
   list:
     * active: yes
       name: '54 cards deck'
@@ -61,6 +60,7 @@ export cfg =
       path: 'CS'
       font: [\CS/index.pug ]
       mono: yes
+      data: \data.ls
       server: yes
       src: cs-src
     * active: no
@@ -94,6 +94,8 @@ export cfg =
   root: { pug: [[\core/index.pug, \index.html ]] }
   # functional part
   chok: {}
+  data: void
+  fonts: void
   mono: void
   server: {}
   src: void

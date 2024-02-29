@@ -27,12 +27,16 @@ export watching = (cb) !->
         if cfg.mono? then [builder.do-exec cfg.chok.mono]
         else [(builder.do-exec cfg.chok[fle]) for fle in cfg.chok[pth]]
       (bach.series ([builder.get-font] ++ nxt)) builder.final-cb
+    else if cfg.chok[pth]? and cfg.chok[pth] is \data
+      choklog \change, pth
+      args = [builder.get-data, (builder.do-exec cfg.chok.mono)]
+      (bach.series args) builder.final-cb
     else
       console.log "recompiling: '#pth'"
       if cfg.mono?
         args =
-          (do-exec cfg.chok[pth])
-          (do-exec cfg.chok.mono)
+          (builder.do-exec cfg.chok[pth])
+          (builder.do-exec cfg.chok.mono)
         (bach.series args) builder.final-cb
       else builder.do-exec cfg.chok[pth], void
   watcher.on \error, (e) !->

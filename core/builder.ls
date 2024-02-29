@@ -2,7 +2,6 @@ require! {
   browserify, path, pug, sass, terser, through
   'fs-extra': fse
   livescript: ls
-  'lucide-static': lucide
 }
 
 # INTERNALS ##################################
@@ -77,6 +76,7 @@ export building = (pcfg) ->
   if pcfg.statiq? and pcfg.statiq
     pack.splice 2 0 ((cb) !-> copy-statiq cb, yes)
   if pcfg.font? then pack.splice (pack.length - 2), 0, get-font
+  if pcfg.data? then pack.splice (pack.length - 2), 0, get-data
   if pcfg.views? and pcfg.views
     pack.splice 2 0 ((cb) !-> copy-views cb, pcfg.path, yes)
   if pcfg.mono? then pack.splice (pack.length - 2), 1, compile-mono
@@ -92,11 +92,9 @@ export compile-mono = (cb) !->
     if lg is \carlin then opts.opts = {name: entry[3]}
     args.push (do-exec opts)
     if cfg.watching
-      #
-      # TODO: handle brew
-      #
-      cfg.chok[opts.inf.substring 2] = opts
-      #
+      if lg is \brew then for k in entry[2]
+        cfg.chok["#{cfg.dir}/#k".substring 2] = opts
+      else cfg.chok[opts.inf.substring 2] = opts
   carlopts =
     inf: "#{cfg.dir}/#{cfg.src['carlin'][0][0]}"
     outf: "#{cfg.out}/#{cfg.src['carlin'][0][1]}"
@@ -139,7 +137,8 @@ export do-exec = ({inf, outf, lg, opts}, cb) !-->>
           bcb = (err, buff) !-> if err isnt null then rej(err) else res(buff)
           b.bundle bcb
         r = (await (new Promise hdl)).toString!
-        if cfg.release or cfg.github then (await terser.minify r).code
+        if cfg.release or cfg.github or cfg.mono?
+          (await terser.minify r).code
         else r
       | \carlin
         c = pug.compileFileClient inf, {compileDebug: no, name: opts.name}
@@ -148,13 +147,11 @@ export do-exec = ({inf, outf, lg, opts}, cb) !-->>
         c = fse.readFileSync inf, \utf-8 |> ls.compile
         if cfg.release or cfg.github then (await terser.minify c).code
         else c
-      | \pug
-        if cfg.mono? then pug.compileFile inf
-        else pug.renderFile inf, cfg
+      | \pug  => pug.renderFile inf, cfg
       | \sass => (sass.compile inf, { style: \compressed }).css
     if cfg.mono?
       if lg isnt \pug then cfg.mono[outf] = r
-      else fse.writeFileSync outf, (r cfg)
+      else fse.writeFileSync outf, r
       if cb? then cb void 24
     else
       drn = path.dirname outf
@@ -170,9 +167,22 @@ export final-cb = (e, r) !->
     console.log "ERROR:\n(Results: #r)\n\n"
     console.log e
 
-export get-font = (cb) ->
+export get-data = (cb) !->
+  pth = "#{cfg.dir}/#{cfg.list[cfg.id].data}"
+  console.log "get data (#pth) ..."
+  unless cfg.data?
+    if cfg.watching then cfg.chok[pth.substring 2] = \data
+  try
+    ctt = fse.readFileSync pth, \utf-8
+    cfg.mono.data = ls.compile ctt, { json: yes }# |> JSON.parse
+    cb void 51
+  catch e
+    cb e, void
+
+export get-font = (cb) !->
+  require! { 'lucide-static': lucide }
   pth = "#{cfg.dir}/font.ls"
-  if not cfg.fonts? # first time
+  unless cfg.fonts? # first time
     if cfg.watching then cfg.chok[pth.substring 2] = cfg.list[cfg.id].font
   try
     d = fse.readFileSync pth, \utf8
