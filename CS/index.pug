@@ -1,0 +1,47 @@
+doctype html
+html(lang='fr')
+  head
+    title CS App
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width,initial-scale=1')
+    style#mono-style= mono.style
+    script#mono-data(type='application/json')!= mono.data
+    script#mono-carlin(type='text/javascript')!= mono.carlin
+    script#mono-app(type='text/javascript')!= mono.app
+  body(onload='App.init()')
+    svg#svg-core(xmlns='http://www.w3.org/2000/svg')
+      include ../utils/dice.pug
+      defs#mono-fonts!= fonts
+    //
+    // TODO: get the title, and modify it
+    //
+    h1#cs-title
+      span
+      button.deactive(onclick='App.edit("title")')
+        svg.font.small: use(href='#pencil')
+      input.hidden
+    //
+    // TODO: menu with the 3 buttons
+    //
+    .menu.deactive
+      button#cs-download(onclick='App.download()', title='Download', disabled)
+        svg.font: use(href='#download')
+      button(onclick='App.json()', title='Export JSON')
+        svg.font: use(href='#fileJson')
+      button#cs-load(onclick='App.import()', title='Import JSON')
+        svg.font: use(href="#upload")
+      button#cs-sync(
+        style='display:none', onclick='App.sync()',
+        title='Synchronize with server', disabled
+      )
+        svg.font: use(href='#refreshCw')
+    //
+    //
+    // TODO: entry selector
+    //
+    //
+    // TODO: diceroller
+    //
+    //
+    // TODO: character sheets
+    //
