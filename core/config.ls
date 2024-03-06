@@ -33,7 +33,7 @@ crunchy-src =
     [\styles/main.sass, \styles/main.css ]
 
 cs-src =
-  brew: [[\scripts/app.ls, \app , [\scripts/app.ls ]]]
+  roll: [[\scripts/app.ls, \app , [\scripts/app.ls, \scripts/editor.ls ]]]
   carlin: [[\index.pug, \index.html, [\index.pug ], \CSHtml ]]
   sass: [[\style.sass, \style ]]
 

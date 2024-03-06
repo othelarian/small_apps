@@ -1,11 +1,7 @@
-# REQUIRES ###################################
-
-require! {
-  '../../utils/basics': { q-sel }
-  '../../utils/quine': { Quine }
-  './editor': { Editor }
-
-}
+``
+import { qSel, Quine } from '../../utils/esm.ls'
+import { Editor } from './editor.ls'
+``
 
 # INITIATORS #################################
 
@@ -40,7 +36,6 @@ App =
     #
     q-sel '#cs-title span' .innerText = Data.title
     q-sel '#cs-title input' .value = Data.title
-    #
     #
     #
     #

@@ -2,6 +2,8 @@ require! {
   browserify, path, pug, sass, terser, through
   'fs-extra': fse
   livescript: ls
+  '@rollup/plugin-terser': plug-terser
+  rollup: {rollup, watch}
 }
 
 # INTERNALS ##################################
@@ -69,6 +71,18 @@ build-start = (cb) !->
   cfg.mono = if prj.mono? then {} else void
   cb void 21
 
+roll-ls = ~>
+  name: 'roll-ls'
+  transform: (code, id) ->
+    out =
+      unless path.extname(id) is '.ls' then null
+      else
+        try
+          ls.compile code, {bare: yes, header: no}
+        catch
+          thrown e
+    code: out
+
 # EXPORTED ###################################
 
 export building = (pcfg) ->
@@ -92,7 +106,7 @@ export compile-mono = (cb) !->
     if lg is \carlin then opts.opts = {name: entry[3]}
     args.push (do-exec opts)
     if cfg.watching
-      if lg is \brew then for k in entry[2]
+      if lg in <[brew roll]> then for k in entry[2]
         cfg.chok["#{cfg.dir}/#k".substring 2] = opts
       else cfg.chok[opts.inf.substring 2] = opts
   carlopts =
@@ -109,7 +123,7 @@ export compile-src = (cb) !->
     opts = {inf: "#{cfg.dir}/#{fc[0]}", outf: "#{cfg.out}/#{fc[1]}", lg}
     do-exec opts, void
     if cfg.watching
-      if lg is \brew then for k in fc[2]
+      if lg in <[brew roll]> then for k in fc[2]
         cfg.chok["#{cfg.dir}/#k".substring 2] = opts
       else cfg.chok[opts.inf.substring 2] = opts
   in-lg = (lg, lst) -> for fc in lst then in-lst lg, fc
@@ -147,7 +161,14 @@ export do-exec = ({inf, outf, lg, opts}, cb) !-->>
         c = fse.readFileSync inf, \utf-8 |> ls.compile
         if cfg.release or cfg.github then (await terser.minify c).code
         else c
-      | \pug  => pug.renderFile inf, cfg
+      | \pug => pug.renderFile inf, cfg
+      | \roll
+        in-opts = input: inf, context: \this, plugins: [roll-ls!]
+        out-opts = format: \iife, plugins: [plug-terser!]
+        bundle = await rollup in-opts
+        out = (await bundle.generate out-opts).output.0.code
+        bundle.close!
+        out
       | \sass => (sass.compile inf, { style: \compressed }).css
     if cfg.mono?
       if lg isnt \pug then cfg.mono[outf] = r

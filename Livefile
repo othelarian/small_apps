@@ -50,6 +50,35 @@ task \compile, 'compile one project (USE PROJECT ID!)', (opts) !->
 task \create, 'create a new project', (opts) !->
   execute opts, \create
 
+task \esm, '', !->
+  require! { 'fs-extra': fse, 'prelude-ls': { List, Str } }
+  excluded = <[ esm cookies local-storage ]>
+  predicate = (file) ->
+    splt = file.split \.
+    splt.0 not in excluded and splt.1 is \ls
+  exported = []
+  data = ''
+  exporting = -> "\n``export { #{exported.join ', '} }``"
+  extract-export = (line) ->
+    if line == /^export/
+      splt = line.split ' '
+      if splt.1 is \class then splt.2 else splt.1
+        |> (.replace '\r' '')
+        |> Str.camelize
+        |> exported.push
+      line.substring 7
+    else line
+  for file in fse.readdirSync \./utils when predicate file
+    console.log "including '#file'..."
+    a = fse.readFileSync "./utils/#file", \utf-8
+      |> Str.lines
+      |> List.map extract-export
+      |> Str.unlines
+      |> (++ '\n\n')
+      |> (data ++=)
+  fse.writeFileSync \./utils/esm.ls, (data ++ exporting!)
+  console.log 'utils exported as ESM'
+
 task \list, 'list all projects actually available', (_) !->
   execute {}, \list
 

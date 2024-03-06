@@ -1,6 +1,8 @@
 # compilation
 dist
 out
+tmp
+utils/esm.ls
 
 # node
 node_modules

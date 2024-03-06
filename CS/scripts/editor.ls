@@ -1,9 +1,4 @@
-# REQUIRES ###################################
-
-require! {
-  '../../utils/basics': { q-sel }
-  './utils'
-}
+`` import { qSel } from '../../utils/esm.ls' ``
 
 # INTERNALS ##################################
 
@@ -14,7 +9,7 @@ toggle-title = !->
 
 # EXPORTED ###################################
 
-export class Editor
+class Editor
   data: void
   store: void
   edit: (k, opts = '') !->
@@ -44,3 +39,5 @@ export class Editor
     # TODO
     #
   init:(@data, @store) !-> void
+
+`` export { Editor } ``

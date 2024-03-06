@@ -11,6 +11,6 @@ export c-elt = (tag, attrs, txt, html, svg = no) ->
   else if html? then elt.innerHTML = html
   elt
 
-export  q-sel = (s, a = no) ->
+export q-sel = (s, a = no) ->
   if a then document.querySelectorAll s
   else document.querySelector s
