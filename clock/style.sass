@@ -1,1 +1,26 @@
-// here the sass
+body
+  margin: 0
+  padding: 0
+  display: flex
+  justify-content: center
+  align-items: center
+  height: 100vh
+  flex-direction: row
+
+#clock
+  margin: 0
+  padding: 0
+
+#config
+  min-width: 350px
+  max-width: 350px
+  background: white
+  border: solid 2px gray
+  border-radius: 5px
+  padding: 5px
+  box-sizing: border-box
+  oberflow: clip
+
+@media (max-width: 700px)
+  body
+    flex-direction: column

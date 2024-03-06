@@ -1,9 +1,13 @@
+# DEFAULT SRC #####################
 code =
   brew: [[ \app.ls, \bundle.js, [ \app.ls ]]]
   default:
     ls: [[ \app.ls, \app.js ]]
     pug: [[ \index.pug, \index.html ]]
     sass: [[ \style.sass, \style.css ]]
+  roll: [[\app.ls, \bundle.js, [\app.ls ]]]
+
+# UPDATED SRC #####################
 
 brew = ->
   out = {}
@@ -17,6 +21,15 @@ dr-src = ->
   sets = <[classic cortex utils others]>
   for set in sets then out.brew[0][2].push "sets/#set.ls"
   out
+
+roll = ->
+  out = {}
+  out <<<< code.default
+  delete out.ls
+  out.roll = code.roll
+  out
+
+# SPECIFIC SRC ####################
 
 crunchy-src =
   brew: [
@@ -36,6 +49,8 @@ cs-src =
   roll: [[\scripts/app.ls, \app , [\scripts/app.ls, \scripts/editor.ls ]]]
   carlin: [[\index.pug, \index.html, [\index.pug ], \CSHtml ]]
   sass: [[\style.sass, \style ]]
+
+# EXPORTED CONFIG #################
 
 export cfg =
   dest: ''
@@ -66,7 +81,7 @@ export cfg =
     * active: no
       name: 'The Clock'
       path: \clock
-      src: code.default
+      src: roll!
     * active: yes
       name: \final-diceroller
       path: \final-dr

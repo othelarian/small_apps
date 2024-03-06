@@ -11,11 +11,11 @@ Project Description
 
 ### In Progress
 
-- [ ] size and resize  
-- [ ] tick  
 - [ ] first draw  
 
 ### Done ✓
 
+- [x] tick  
+- [x] size and resize  
 - [x] active config  
 

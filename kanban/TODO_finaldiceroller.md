@@ -10,10 +10,10 @@ Project Description
 
 ### In Progress
 
-- [ ] Other 2 => C+  
 
 ### Done ✓
 
+- [x] Other 2 => C+  
 - [x] Other 2 => D&G  
 - [x] Other => PbtA  
 - [x] Other => ZC  
