@@ -5,11 +5,31 @@ body
   max-width: 600px
   margin: auto
 
-button:disabled svg.font
-  stroke: gray
+button
+  background: white
+  border: solid 1px black
+  border-radius: 3px
+
+  &:hover
+    background: darkgray
+
+    svg.font
+      stroke: white
+
+button:disabled
+  border-color: gray
+
+  &:hover
+    background: white
+
+  svg.font
+    stroke: gray
 
 h1
   text-align: center
+
+  span
+    margin-right: 5px
 
 .deactive, .hidden
   display: none
@@ -20,6 +40,18 @@ h1
   fill: none
   stroke: black
   stroke-width: 1px
+
+.menu
+  position: absolute
+  top: 0
+  left: 30px
+
+.small
+  padding: 1px
+
+  .font
+    width: 14px
+    height: 14px
 
 #svg-core
   width: 0

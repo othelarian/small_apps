@@ -5,3 +5,4 @@ fonts:
   \pencil
   \refreshCw
   \upload
+  \x

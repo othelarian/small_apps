@@ -12,19 +12,15 @@ html(lang='fr')
     svg#svg-core(xmlns='http://www.w3.org/2000/svg')
       include ../utils/dice.pug
       defs#mono-fonts!= fonts
-    //
-    // TODO: get the title, and modify it
-    //
     h1#cs-title
       span
-      button.deactive(onclick='App.edit("title")')
-        svg.font.small: use(href='#pencil')
-      input.hidden
-    //
-    // TODO: menu with the 3 buttons
-    //
+      button.hidden.small(onclick='App.edit("title", "cancel")', title='Cancel')
+        svg.font: use(href='#x')
+      button.deactive.small(onclick='App.edit("title")')
+        svg.font: use(href='#pencil')
+      input.hidden(maxlength='22')
     .menu.deactive
-      button#cs-download(onclick='App.download()', title='Download', disabled)
+      button#cs-download(onclick='App.download()', title='Download')
         svg.font: use(href='#download')
       button(onclick='App.json()', title='Export JSON')
         svg.font: use(href='#fileJson')
