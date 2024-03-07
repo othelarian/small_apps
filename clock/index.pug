@@ -7,11 +7,37 @@ html
     link(rel='stylesheet', href='style.css')
     script(type='text/javascript', src='bundle.js')
   body(onload='App.init()')
+    svg(xmlns='http://www.w3.org/2000/svg', style='display:none')
+      defs
+        //
+        //
     canvas#clock(ondblclick='App.toggle()')
     #config(style='display:none')
-      //
-      div this
-      //
+      .selector
+        .block
+          button()
+            svg.arrow: use(href='#up')
+          //
+        .inter -
+        .block
+          //
+          //
+        .inter -
+        .block
+          //
+          //
+      .selector
+        .block
+          //
+          //
+        .inter :
+        .block
+          //
+          //
+        .inter :
+        .block
+          //
+          //
       .config
         //
         // TODO
