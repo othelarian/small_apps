@@ -58,10 +58,12 @@ export cfg =
   dir: ''
   id: 0
   list:
+    # 54 Deck ################
     * active: yes
       name: '54 cards deck'
       path: \54_deck
       src: code.default
+    # Crunchy Cortex #########
     * active: no
       name: 'Crunchy Cortex'
       path: 'crunchy'
@@ -70,6 +72,7 @@ export cfg =
       src: crunchy-src
       statiq: yes
       views: yes
+    # CS #####################
     * active: no
       name: 'Cereal Killers'
       path: 'CS'
@@ -78,10 +81,12 @@ export cfg =
       data: \data.ls
       server: yes
       src: cs-src
+    # The Clock ##############
     * active: no
       name: 'The Clock'
       path: \clock
       src: roll!
+    # Final DR ###############
     * active: yes
       name: \final-diceroller
       path: \final-dr
@@ -90,16 +95,21 @@ export cfg =
       cmds:
         bookmark: 'generate the bookmark code'
       version: 1.6
+    # MineSweeper ############
     * active: yes
       name: \minesweeper
       path: \minesweeper
       src: brew!
       statiq: yes
       font: [ \minesweeper/index.pug ]
+    # Simon's ################
     * active: no
       name: 'Simon\'s game'
       path: \simon
-      src: code.default
+      font: [\simon/index.pug ]
+      statiq: yes
+      src: roll!
+    # Test WASM ##############
     * active: no
       name: \wasm_test
       path: \wasm_test

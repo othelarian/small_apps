@@ -1,1 +1,122 @@
-// here the sass
+body
+  --alt-a-col: #ddd
+  --base-col: white
+  --inv-col: #333
+  --up-left-col: blue
+  --up-right-col: yellow
+  --down-right-col: lawngreen
+  --down-left-col: red
+  background: var(--base-col)
+  color: var(--inv-col)
+
+button
+  border-color: var(--inv-col)
+  border-radius: 5px
+  background: var(--base-col)
+  color: var(--inv-col)
+
+h1
+  text-align: center
+
+.block
+  margin: auto
+  width: 400px
+  text-align: center
+  padding: 15px
+
+.hidden
+  display: none
+
+.settings
+  margin: 5px auto
+  display: flex
+  justify-content: center
+  gap: 10px
+
+  .tog-settings
+    display: inline-block
+    user-select: none
+    margin: 0
+
+    svg
+      border: solid 1px
+      border-radius: 10px
+
+      line
+        fill: none
+        stroke: var(--alt-a-col)
+        stroke-width: 14px
+        stroke-linecap: round
+
+      .font
+        stroke: var(--inv-col)
+        fill: none
+        stroke-width: 2
+        stroke-linecap: round
+        stroke-linejoin: round
+        transform: scale(0.6)
+
+      .set-select
+        fill: var(--base-col)
+        stroke: var(--inv-col)
+        stroke-width: 2px
+
+      .toggler
+        fill: #fff0
+        cursor: pointer
+
+#bestscore
+  font-size: 20px
+
+  span.value
+    font-size: 22px
+    font-weight: bold
+    text-decoration: underline
+
+#welcome button
+  font-size: 30px
+  padding: 5px 15px
+  margin-bottom: 20px
+
+#game
+  text-align: center
+
+  svg
+    width: 350px
+    height: 350px
+
+  circle
+    stroke: none
+    fill: var(--inv-col)
+
+  path
+    stroke-linejoin: round
+
+@mixin path-elt($hover)
+  &
+    transition: 1s stroke ease-out
+    stroke: $hover
+    stroke-width: 4
+
+  &:hover
+    filter: drop-shadow(0 0 12px $hover)
+
+  &:active
+    transition: 0s stroke !important
+    stroke: var(--base-col)
+
+.path-upleft
+  @include path-elt(var(--up-left-col))
+  fill: var(--up-left-col)
+
+.path-downright
+  @include path-elt(var(--down-right-col))
+  fill: var(--down-right-col)
+
+.path-downleft
+  @include path-elt(var(--down-left-col))
+  fill: var(--down-left-col)
+
+.path-upright
+  @include path-elt(var(--up-right-col))
+  fill: var(--up-right-col)

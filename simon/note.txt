@@ -1,0 +1,7 @@
+
+time (tenacity) : 0.7
+
+sound 1 => C4 Fa
+sound 2 => C4 Do#
+sound 3 => C3 La
+sound 4 => C3 Re
