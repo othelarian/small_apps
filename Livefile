@@ -45,7 +45,7 @@ task \cmd, 'execute a command in a project', (opts) !->
   execute ({} <<< opts <<< {github: no, release: no}), \cmd
 
 task \compile, 'compile one project (USE PROJECT ID!)', (opts) !->
-  execute ({} <<< opts <<< {github: no, release: no}), \compile
+  execute ({} <<< opts <<< {github: no}), \compile #, release: no}), \compile
 
 task \create, 'create a new project', (opts) !->
   execute opts, \create
@@ -83,4 +83,4 @@ task \list, 'list all projects actually available', (_) !->
   execute {}, \list
 
 task \serve, 'launch the server to get access to the projects', (opts) !->
-  execute ({} <<< opts <<< {github: no, release: no}), \serve
+  execute ({} <<< opts <<< {github: no}), \serve #, release: no}), \serve

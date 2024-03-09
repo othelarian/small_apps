@@ -2,8 +2,7 @@ require! {
   browserify, path, pug, sass, terser, through
   'fs-extra': fse
   livescript: ls
-  '@rollup/plugin-terser': plug-terser
-  rollup: {rollup, watch}
+  rollup: {rollup}
 }
 
 # INTERNALS ##################################
@@ -147,13 +146,29 @@ export do-exec = ({inf, outf, lg, opts}, cb) !-->>
     r = switch lg
       | \brew
         b = browserify inf, {extensions: [ \.ls ], transform: brew-ls}
-        hdl = (res, rej) !->
-          bcb = (err, buff) !-> if err isnt null then rej(err) else res(buff)
-          b.bundle bcb
-        r = (await (new Promise hdl)).toString!
+          .plugin \@browserify/uglifyify
+          .plugin \common-shakeify
+          .plugin \browser-pack-flat/plugin
         if cfg.release or cfg.github or cfg.mono?
+          /* old method, just in case
+          handler = (res, rej) !->
+            bcb = (err, buf) !-> if err isnt null then rej err else res buf
+            b.bundle bcb
+          r = (await (new Promise handler)).toString!
           (await terser.minify r).code
-        else r
+          */
+          o = b.bundle!pipe(require('minify-stream')(sourceMap: no))
+          p = new Promise (res) ->
+            data = ''
+            o.on \data, (buf) !-> data ++= buf
+            o.on \finish, !->
+              res data
+          await p
+        else
+          handler = (res, rej) !->
+            bcb = (err, buf) !-> if err isnt null then rej err else res buf
+            b.bundle bcb
+          (await (new Promise handler)).toString!
       | \carlin
         c = pug.compileFileClient inf, {compileDebug: no, name: opts.name}
         (await terser.minify c).code
@@ -163,7 +178,11 @@ export do-exec = ({inf, outf, lg, opts}, cb) !-->>
         else c
       | \pug => pug.renderFile inf, cfg
       | \roll
-        in-opts = input: inf, context: \this, plugins: [roll-ls!]
+        require! {
+          '@rollup/plugin-node-resolve': node-resolve
+          '@rollup/plugin-terser': plug-terser
+        }
+        in-opts = input: inf, context: \this, plugins: [roll-ls!, node-resolve!]
         out-opts = format: \iife, plugins: [plug-terser!]
         bundle = await rollup in-opts
         out = (await bundle.generate out-opts).output.0.code

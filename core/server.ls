@@ -14,6 +14,6 @@ export serve = (cb) !->
     for config in serv-lst then require "../#{config.path}/server" .setup app
     console.log 'configs DONE'
   console.log 'launching dev server...'
-  app.use express.static \./dist
+  app.use express.static cfg.dest
   app.listen 5001
   console.log 'dev server running on port 5001'
