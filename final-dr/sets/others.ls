@@ -87,14 +87,17 @@ function recluse mode
     "<svg#atr viewBox='0 0 #{if p then 48 else 24} 24'>#use#add</svg>"
   gr = [App.rand2 6]; br = [App.rand2 6]
   g = gr[0]; b = br[0]
+  switch mode
+    | \a => [gr, g] = to-bold gr
+    | \d => [br, b] = to-bold br
   tm = (showdice (mode is \a)) ++ ' vs ' ++ (showdice (mode is \d))
   tt = switch
     | g is b => 'EQUAL! (and ' ++ (if g < 4 then 'BAD)' else 'GOOD)')
     | g < b => 'NO'
     | g > b => 'YES'
   if g isnt b
-    if g >= 3 and b >= 3 then tt = tt ++ ' and'
-    else if g < 3 and b < 3 then tt = tt ++ ' but'
+    if g > 3 and b > 3 then tt = tt ++ ' and'
+    else if g < 4 and b < 4 then tt = tt ++ ' but'
   "Recluse #tm: [#{gr * ', '}] vs. [#{br * ', '}] => #tt"
 
 # TINYD6 #####################################
