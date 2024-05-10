@@ -67,9 +67,7 @@ export cfg =
     * active: yes
       name: 'Criptic'
       path: \criptic
-      #
-      src: [] # TODO
-      #
+      src: code.default
       cmds:
         copy: 'copy the criptic files from trancode'
     # Crunchy Cortex #########

@@ -41,7 +41,7 @@ export command = (opts) !->
   else if opts.cmd not of cfg.list[opts.id].cmds
     console.log 'please select a command that exists in the list!'
     console.log '(use `cmd -p PROJECT_ID --l` to get the list of the commands)'
-  else require("../#{cfg.list[opts.id].path}/cmds")[opts.cmd]!
+  else require("../#{cfg.list[opts.id].path}/cmds")[opts.cmd] opts
 
 export compile = (opts) !->
   if opts.watch? then cfg.watching = opts.watch

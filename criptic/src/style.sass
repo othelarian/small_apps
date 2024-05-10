@@ -1,0 +1,25 @@
+h1, h2
+  text-align: center
+
+.container
+  max-width: 600px
+  margin: auto
+  background: yellow
+
+  &.hidden
+    display: none
+
+.menu
+  max-width: 600px
+  margin: auto
+  text-align: center
+  border-bottom: solid 1px lightgray
+
+  button
+    border: solid 1px lightgray
+    &:hover
+        background: white !important
+    &.active
+      background: white
+    &.inactive
+      background: gray

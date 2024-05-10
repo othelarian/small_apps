@@ -1,0 +1,25 @@
+doctype html
+html
+  head
+    meta(http-equiv="Content-Type", content="text/html;charset=UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title Criptic
+    link(rel="stylesheet", href="style.css")
+    script(type="text/javascript",src="app.js") 
+  body(onload="app.init()")
+    h1 Criptic
+    .menu
+      button#btn-home.active(onclick="app.show('home')") Write
+      button#btn-doc.inactive(onclick="app.show('doc')") Doc
+    #home.container
+      h2 Write
+      button(onclick="app.dl()")
+      textarea#txt-in(onchange="app.update()")
+      canvas#txt-out
+    #doc.container.hidden
+      h2 Doc
+      //
+      // TODO
+      //
+      div doc
+      //
