@@ -4,10 +4,8 @@ h1, h2
 .container
   max-width: 600px
   margin: auto
-  background: yellow
-
   &.hidden
-    display: none
+    display: none !important
 
 .menu
   max-width: 600px
@@ -23,3 +21,24 @@ h1, h2
       background: white
     &.inactive
       background: gray
+
+#home
+  display: flex
+  flex-direction: column
+  align-items: center
+  gap: 5px
+
+#samples
+  display: flex
+  flex-wrap: wrap
+  align-items: center
+  justify-content: center
+  & > div
+    width: 140px
+
+#txt-in
+  width: calc(100% - 10px)
+  height: 60px
+
+#txt-out
+  border: solid 1px lightgray

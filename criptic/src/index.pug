@@ -12,14 +12,10 @@ html
       button#btn-home.active(onclick="app.show('home')") Write
       button#btn-doc.inactive(onclick="app.show('doc')") Doc
     #home.container
-      h2 Write
-      button(onclick="app.dl()")
-      textarea#txt-in(onchange="app.update()")
+      h2 Accueil
+      button(onclick="app.dl()") Download
+      textarea#txt-in(onkeyup="app.update()")
       canvas#txt-out
     #doc.container.hidden
       h2 Doc
-      //
-      // TODO
-      //
-      div doc
-      //
+      #samples

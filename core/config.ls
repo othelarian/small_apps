@@ -9,6 +9,12 @@ code =
 
 # UPDATED SRC #####################
 
+to-src = ->
+  out = {}
+  out <<<< code.default
+  for lang of out then out[lang].0.0 = "src/#{out[lang].0.0}"
+  out
+
 brew = ->
   out = {}
   out <<<< code.default
@@ -67,7 +73,7 @@ export cfg =
     * active: yes
       name: 'Criptic'
       path: \criptic
-      src: code.default
+      src: to-src!
       cmds:
         copy: 'copy the criptic files from trancode'
     # Crunchy Cortex #########
