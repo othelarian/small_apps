@@ -1,4 +1,9 @@
-`` import { qSel } from '../utils/esm.js' ``
+# REQUIRES ###################################
+
+require! {
+  '../utils/basics': {q-sel}
+  '../utils/ls-class': {LocalStorage}
+}
 
 # UTILS ######################################
 

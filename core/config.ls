@@ -108,7 +108,7 @@ export cfg =
       path: \simon
       font: [\simon/index.pug ]
       statiq: yes
-      src: roll!
+      src: brew!
     # Test WASM ##############
     * active: no
       name: \wasm_test

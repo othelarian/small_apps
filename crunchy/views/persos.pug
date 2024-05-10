@@ -4,14 +4,41 @@ html
     title CC - Les persos
     script(type='text/javascript', src='/crunchy/scripts/persos.js')
     style.
-      body {text-align:center;}
+      body {display:flex;flex-direction:row;gap:20px;justify-content:center;}
+      button svg {width:18px;height:18px;}
       iframe {width:216mm;height:calc(100vh - 100px);}
+      .dr {width:240px;border:solid 1px black;max-height:calc(100vh - 20px);}
+      .fiches {max-width:217mm;}
+      .line {
+        height:35px;display:flex;gap:3px;justify-content:center;
+        border-bottom:solid 1px gray;box-sizing:border-box;align-items:center;
+      }
+      .line button {height:28px;padding:4px;}
+      .svg-core {width:0;height:0;position:absolute;z-index:-1;}
+      #res {
+        display:flex;flex-direction:column;align-items:center;
+        max-height:calc(100vh - 132px);overflow:auto;
+      }
+      #res div {width:198px;border:solid 1px gray;text-align:center;}
   body(onload='App.select()')
-    select#selector(onchange='App.select()')
-      each f in fiches
-        - var d = f.split('.')[0]
-        option(value=d)= d
-    p
-      span La fiche :&nbsp;
-      a#link(target='blank')
-    iframe#frame
+    svg.svg-core(xmlns='http://www.w3.org/2000/svg')
+      include ../../../utils/dice.pug
+    .dr
+      .line
+        each v in [4,6,8,10,12]
+          button(onclick='App.add('+v+')')
+            svg(viewBox='0 0 24 24'): use(href='#d'+v)
+      #tray.line
+      .line
+        button(onclick='App.clear()') Clear
+        button(onclick='App.roll()') Roll
+      #res
+    .fiches
+      select#selector(onchange='App.select()')
+        each f in fiches
+          - var d = f.split('.')[0]
+          option(value=d)= d
+      p
+        span La fiche :&nbsp;
+        a#link(target='blank')
+      iframe#frame
