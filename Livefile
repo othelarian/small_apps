@@ -42,7 +42,7 @@ task \clean, 'remove `dist`', (opts) !->
   execute opts, \clean
 
 task \cmd, 'execute a command in a project', (opts) !->
-  execute ({} <<< opts <<< {github: no, release: no}), \cmd
+  execute ({} <<< opts <<< {github: no, release: no}), \command
 
 task \compile, 'compile one project (USE PROJECT ID!)', (opts) !->
   execute ({} <<< opts <<< {github: no}), \compile #, release: no}), \compile

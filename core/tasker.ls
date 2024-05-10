@@ -25,7 +25,7 @@ export clean = !->
     if e? then console.log e
     else console.log "`#{cfg.dest}` removed successfully"
 
-export command = !->
+export command = (opts) !->
   if opts.id is void
     console.log 'please set the project\'s id you want to call a command from'
   else if opts.id > cfg.list.length
@@ -41,7 +41,7 @@ export command = !->
   else if opts.cmd not of cfg.list[opts.id].cmds
     console.log 'please select a command that exists in the list!'
     console.log '(use `cmd -p PROJECT_ID --l` to get the list of the commands)'
-  else cfg.list[opts.id].cmd opts.cmd
+  else require("../#{cfg.list[opts.id].path}/cmds")[opts.cmd]!
 
 export compile = (opts) !->
   if opts.watch? then cfg.watching = opts.watch

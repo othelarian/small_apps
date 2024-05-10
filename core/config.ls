@@ -63,6 +63,15 @@ export cfg =
       name: '54 cards deck'
       path: \54_deck
       src: code.default
+    # Criptic ################
+    * active: yes
+      name: 'Criptic'
+      path: \criptic
+      #
+      src: [] # TODO
+      #
+      cmds:
+        copy: 'copy the criptic files from trancode'
     # Crunchy Cortex #########
     * active: no
       name: 'Crunchy Cortex'
@@ -91,7 +100,6 @@ export cfg =
       name: \final-diceroller
       path: \final-dr
       src: dr-src!
-      cmd: (cmd) !-> require! '../final-dr/cmds': module; module[cmd]!
       cmds:
         bookmark: 'generate the bookmark code'
       version: 1.6
