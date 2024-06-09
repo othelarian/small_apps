@@ -2,7 +2,7 @@
 
 require! {
   'fs-extra': fse
-  livescript: ls
+  '@othelarian/livescript': ls
 }
 
 # INTERNALS ##################################

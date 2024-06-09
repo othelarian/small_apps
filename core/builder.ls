@@ -1,7 +1,7 @@
 require! {
   browserify, path, pug, sass, terser, through
   'fs-extra': fse
-  livescript: ls
+  '@othelarian/livescript': ls
   rollup: {rollup}
 }
 

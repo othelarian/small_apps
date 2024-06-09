@@ -1,7 +1,7 @@
 require! {
   terser
   'fs-extra': fse
-  livescript: ls
+  '@othelarian/livescript': ls
 }
 
 export bookmark = !->>
