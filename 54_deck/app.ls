@@ -59,7 +59,7 @@ Deck =
     #
     if hand
       q-sel '#play-hand' .innerHTML = ''
-      State.h = []
+      State.hs = [[]]
     q-sel '#play-discard' .innerHTML = ''
     State.d = []
   copy: !->
@@ -68,7 +68,7 @@ Deck =
     #
     # TODO: add a button to get the card back in hand
     #
-    State.h = State.h.filter (isnt id)
+    State.hs.0 = State.hs.0.filter (isnt id)
     State.d.push id
     q-sel "\#c#id button" .remove!
     q-sel '#play-discard' .append q-sel "\#c#id"
@@ -78,7 +78,11 @@ Deck =
   draw: !->
     if State.p < State.s.length
       id = State.f[State.p]
-      State.h.push id
+      #
+      # TODO: insert into the only hand we have right now
+      #
+      State.hs.0.push id
+      #
       App.deck.card id
       State.p++
       App.deck.stats!
@@ -100,12 +104,14 @@ Deck =
       delete ld.h
       du = yes
     State <<< ld
-    if du then App.dump!
+    if du then App.deck.dump!
     App.deck.clean yes
     #
     # TODO: modify this to adapt to multi hand system
     #
-    for id in (ld.h.concat ld.d) then App.deck.card id
+    console.log ld
+    #
+    for id in (ld.hs.flat!concat ld.d) then App.deck.card id
     for id in ld.d then App.deck.discard id, yes
     App.deck.stats!
   regen: !->
@@ -120,7 +126,7 @@ Deck =
     App.deck.dump!
   stats: !->
     q-sel '#play-stats-left' .innerText = State.s.length - State.p
-    q-sel '#play-stats-hand' .innerText = State.h.length
+    q-sel '#play-stats-hand' .innerText = State.hs.flat!length
     q-sel '#play-stats-discard' .innerText = State.d.length
 
 # CORE #######################################
@@ -158,7 +164,7 @@ App =
         lst.innerHTML = ''
         lst.innerHTML =
           if State.s.length is 0 then 'There\'s no card in the deck'
-          else (for c in State.s then "<span>#{c}</span>").join ''
+          else (for c in State.s then "<span>#{c}</span>") * ''
       App.veil.activate on
     close: !->
       App.veil.activate off

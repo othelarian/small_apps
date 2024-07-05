@@ -10,14 +10,12 @@ code =
 # UPDATED SRC #####################
 
 to-src = ->
-  out = {}
-  out <<<< code.default
+  out = structuredClone code.default
   for lang of out then out[lang].0.0 = "src/#{out[lang].0.0}"
   out
 
 brew = ->
-  out = {}
-  out <<<< code.default
+  out = structuredClone code.default
   delete out.ls
   out.brew = code.brew
   out
@@ -29,8 +27,7 @@ dr-src = ->
   out
 
 roll = ->
-  out = {}
-  out <<<< code.default
+  out = structuredClone code.default
   delete out.ls
   out.roll = code.roll
   out
